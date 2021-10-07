@@ -14,7 +14,7 @@ if(r_on_server==T) .libPaths("/net/ifs2/san_projekte/projekte/genstat/07_program
 
 #.libPaths()
 
-if(r_on_server==T) pathwd = paste0(basicpath, "/13_lehre/WS2021_Statistik/uebung/Theorie/") else pathwd = paste0(basicpath,"Exercises_R/")
+if(r_on_server==T) pathwd = paste0(basicpath, "/13_lehre/WS2122_Statistik/uebung/Theorie/") else pathwd = paste0(basicpath,"Exercises_R/")
 setwd(pathwd)
 
 # Hier sollen alle notwendigen Pakete stehen die im Laufe der Uebung genutzt werden
@@ -49,8 +49,8 @@ Hinweise zur Syntax von RMarkdown finden Sie [hier](https://rstudio.com/wp-conte
 Grundsätzlich ist es sinnvoll, zunächst das Arbeitsverzeichnis festzulegen (Speicherort des Skripts) und anzugeben wo relevante **R-Pakete** liegen (ggf. abh. von R Version oder Schreibrechten!), zum Beispiel:
 
 ```{r setup2, eval=F}
-setwd("D:/Lehre/WS2021_Statistik/uebung/RUebungen/")
-.libPaths("C:/Program Files/R/R-3.6.0/library")
+setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
+.libPaths("C:/Program Files/R/R-4.1.1/library")
 
 # Hier sollen alle notwendigen Pakete stehen die im Laufe der Uebung genutzt werden
 library(knitr)
