@@ -5,7 +5,8 @@ author: "Janne Pott"
 date: "WS 2021/22"
 output: pdf_document
 ---
-  
+
+Sie können Ihre Lösung zu Aufgabe 1 als PDF in Moodle hochladen (Frist: 08.11.2021).   
 
 ```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
 r_on_server = FALSE
@@ -61,8 +62,6 @@ c) Zeigen Sie allgemein, dass der **Maximum-Likelihood-Schätzer** der Allelhäu
 d) Bestimmen Sie den **Maximum-Likelihood-Schätzer** für Ihre Daten, die zugehörige –Log-Likelihood und vergleichen Sie diese Werte mit denen unter a.
 e) Ab wie vielen Treffern könnten Sie die Annahme, dass die wahre Allelfrequenz 50% beträgt, nicht mehr ablehnen? (Signifikanzniveau von 5%) 
 
-\newpage
-
 ## Aufgabe 3: Konfidenzintervall
 
 Beim [ARD-Deutschlandtrend](https://www.tagesschau.de/inland/deutschlandtrend/) werden monatlich etwa 1000 Wahlberechtigte befragt. In der Anlage wird die Schwankungsbreite zwischen 1.4 und 3.1 Prozentpunkten angegeben (s. Info-Box unten). Überprüfen Sie diese Aussage zur Fehlertoleranz, indem Sie die Konfidenzintervalle für die Anteilswerte $p_1=0.05$ und $p_2=0.5$ berechnen. 
@@ -100,4 +99,3 @@ rs1008 | 0.002 |  |  |
 rs1009 | 0.015 |  |  | 
 
 
-\newpage
