@@ -6,6 +6,7 @@ date: "WS 2021/22"
 output: pdf_document
 ---
   
+Sie können Ihre Lösungen zu Aufgabe 4 & 5 als PDF in Moodle hochladen (Frist: 25.10.2021). 
 
 ```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
 r_on_server = FALSE
