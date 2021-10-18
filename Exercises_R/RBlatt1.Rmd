@@ -6,6 +6,7 @@ date: "WS 2021/22"
 output: pdf_document
 ---
 
+Sie können Ihre Lösungen als PDF & Rmd in Moodle hochladen (Frist: 01.11.2021). 
 
 ```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
 r_on_server = FALSE
@@ -49,10 +50,13 @@ Hinweise zur Syntax von RMarkdown finden Sie [hier](https://rstudio.com/wp-conte
 Grundsätzlich ist es sinnvoll, zunächst das Arbeitsverzeichnis festzulegen (Speicherort des Skripts) und anzugeben wo relevante **R-Pakete** liegen (ggf. abh. von R Version oder Schreibrechten!), zum Beispiel:
 
 ```{r setup2, eval=F}
-setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
-.libPaths("C:/Program Files/R/R-4.1.1/library")
+getwd()
+.libPaths()
+# bitte ggf. anpassen, sollte sowas sein wie
+# setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
+# .libPaths("C:/Program Files/R/R-4.1.1/library")
 
-# Hier sollen alle notwendigen Pakete stehen die im Laufe der Uebung genutzt werden
+# Dies sind die Pakete, die im Laufe des Semesters benötigt werden. Bitte alle jetzt schon installieren. 
 library(knitr)
 library(foreach)
 library(doParallel)
@@ -64,8 +68,8 @@ library(nlme)
 library(ggplot2)
 library(meta)
 library(qqman)
-#library(ivpack)
-#library(MendelianRandomization)
+library(ivpack)
+library(MendelianRandomization)
 
 knitr::opts_chunk$set(echo = TRUE)
 

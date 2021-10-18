@@ -6,6 +6,8 @@ date: "WS 2021/22"
 output: pdf_document
 ---
 
+Sie können Ihre Lösungen als PDF & Rmd in Moodle hochladen (Frist: 01.11.2021). 
+
 In dieser Übung wird in die Statistik-Software [R](https://www.r-project.org/) eingeführt. R ist eine frei verfügbare Software, die unter Windows, MacOS X und Linux zur Verfügung steht. Zusammen mit der einfachen grafischen Oberfläche [RStudio](www.rstudio.com) können damit auch Einsteiger recht komfortabel grafische Darstellungen und statistische Auswertungen von Daten erstellen. Insbesondere bei der Verarbeitung von Genom-Daten ist es eines der Standardwerkzeuge. Informationen dazu findet man bei [Bioconductor](https://www.bioconductor.org/).
 
 In dieser ersten Übung sollen Sie zunächst einige Grundfunktionen von R kennenlernen bzw. wiederholen. Im Anschluss zu jedem Kapitel gibt ein paar Aufgaben, die Sie bitte lösen sollen. 
@@ -17,11 +19,14 @@ Hinweise zur Syntax von RMarkdown finden Sie [hier](https://rstudio.com/wp-conte
 
 Grundsätzlich ist es sinnvoll, zunächst das Arbeitsverzeichnis festzulegen (Speicherort des Skripts) und anzugeben wo relevante **R-Pakete** liegen (ggf. abh. von R Version oder Schreibrechten!), zum Beispiel:
 
-```{r setup2, eval=F}
-setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
-.libPaths("C:/Program Files/R/R-4.1.1/library")
+```{r setup2}
+getwd()
+.libPaths()
+# bitte ggf. anpassen, sollte sowas sein wie
+# setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
+# .libPaths("C:/Program Files/R/R-4.1.1/library")
 
-# Hier sollen alle notwendigen Pakete stehen die im Laufe der Uebung genutzt werden
+# Dies sind die Pakete, die im Laufe des Semesters benötigt werden. Bitte alle jetzt schon installieren. 
 library(knitr)
 library(foreach)
 library(doParallel)
