@@ -28,6 +28,7 @@ This is not planned as R package, so no installation needed, just fork the repos
 * Test2
 * Test3
 * Test 4
+* Test5
 * Add all exercises
 * Update exercises after students feedback (typos, understandability of the tasks, etc.)
 * Add solutions?
