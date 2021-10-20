@@ -16,6 +16,8 @@ the repository and work within your own github/git/RStudio enviroment.
 
 -   Test ob transfer geklappt hat
 -   Test2
+-   Test3
+-   Test 4
 -   Add all exercises
 -   Update exercises after students feedback (typos, understandability
     of the tasks, etc.)
