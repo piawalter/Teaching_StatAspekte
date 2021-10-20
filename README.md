@@ -14,6 +14,8 @@ the repository and work within your own github/git/RStudio enviroment.
 
 ## To do
 
+-   Test ob transfer geklappt hat
+-   Test2
 -   Add all exercises
 -   Update exercises after students feedback (typos, understandability
     of the tasks, etc.)
