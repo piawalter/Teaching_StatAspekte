@@ -24,6 +24,7 @@ This is not planned as R package, so no installation needed, just fork the repos
 
 ## To do
 
+* Test ob transfer geklappt hat
 * Add all exercises
 * Update exercises after students feedback (typos, understandability of the tasks, etc.)
 * Add solutions?
