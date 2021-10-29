@@ -1,0 +1,271 @@
+---
+title: "Genetische Statistik"
+subtitle: "WS 2021/2022 \nR - Übung 1 - Grundlagen"
+author: Dr. Janne Pott (janne.pott@uni-leipzig.de)
+date: November 02, 2021
+output: 
+  beamer_presentation:
+    theme: "Madrid"
+    colortheme: "lily"
+    fonttheme: "structurebold"
+    slide_level: 2
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(knitr)
+library(foreach)
+library(doParallel)
+library(data.table)
+library(readxl)
+library(ggplot2)
+```
+
+## Aufgabe 1: R als Taschenrechner
+
+Berechnen Sie folgende Terme: 
+
+- $|3^5 - 2^{10}|$
+- $sin(\frac34 \pi)$
+- $\frac{16!}{5!11!}$
+- $\sqrt{37-8} + \sqrt{11}$
+- $e^{-2.7}/0.1$
+- $2.3^8 + \ln(7.4) - \tan(0.3\pi)$
+- $\log_{10}(27)$
+- $\ln(\pi)$
+- $\ln(-1)$
+
+## Aufgabe 1: Lösung
+
+```{r B1A1_L, eval=F,echo=T}
+abs(3^5 - 2^10)
+sin((3/4)*pi)
+factorial(16)/(factorial(5)*factorial(11))
+sqrt(37-8) + sqrt(11)
+exp(-2.7)/0.1
+2.3^8 + log(7.4) - tan(0.3*pi)
+log10(27)
+log(pi)
+log(-1)
+```
+
+## Aufgabe 2: Variablen und Folgen
+
+Erzeugen Sie für $n= 1, ..., 10$:
+
+- $a_n = 3^n$
+- $b_n = e^{-n}$
+- $c_n = (1 + \frac1n)^n$
+- $d_n = \sin(n \frac{\pi}{10})$
+
+## Aufgabe 2: Lösung
+
+```{r B1A2_L, eval=F,echo=T}
+n<-seq(1:10)
+a<-3^n
+a
+b<-exp(-n)
+b
+c<-(1 + 1/n)^n
+c
+d<-sin(n*pi/10)
+d
+```
+
+## Aufgabe 3: Funktionen
+
+- $h(x)=\sin(\sqrt{x})$ an 0, 0.1, 0.2, ..., 0.9, und 1. 
+- $g_1(a,b,c) = \frac{a*b}{a*b+(1-c)*(1-a)}$ und $g_2(a,b,c) = \frac{c*(1-a)}{c*(1-a)+(1-b)*a}$ für $a \in [0,1]$, $b=0.7$ und $c=0.95$ 
+- Plot von $g_1$ und $g_2$ für $a \in [0,1]$, $b=0.7$ und $c=0.95$. 
+
+## Aufgabe 3: Lösung (1)
+
+```{r B1A3_L1, eval=T,echo=T,tidy=T}
+h<-function(x){sin(sqrt(x))}
+x<-seq(0,1,0.1)
+options(width = 60)
+h(x)
+
+```
+
+## Aufgabe 3: Lösung (2)
+
+```{r B1A3_L2, eval=T,echo=T,tidy=T}
+g1<-function(a,b,c){return(b*a/(b*a+(1-c)*(1-a)))}
+g2<-function(a,b,c) {return(c*(1-a)/(c*(1-a)+(1-b)*a))}
+g1(x,0.7,0.95)
+g2(x,0.7,0.95)
+```
+
+## Aufgabe 3: Lösung (3)
+
+```{r, eval=F,echo=T}
+curve(g1(x,0.7,0.95),0,1,
+      main = "Plot for g_1 and g_2",
+      xlab = "a",
+      ylab = "g_i(a,0.7,0.95)")
+curve(g2(x,0.7,0.95),add=TRUE,col="red",lty="dashed")
+legend(0.88, 0.65, legend=c("g_1", "g_2"),
+       col=c("black", "red"), lty=1:2, cex=0.8)
+```
+
+## Aufgabe 3: Lösung (3)
+
+```{r, eval=T,echo=F}
+curve(g1(x,0.7,0.95),0,1,
+      main = "Plot for g_1 and g_2",
+      xlab = "a",
+      ylab = "g_i(a,0.7,0.95)")
+curve(g2(x,0.7,0.95),add=TRUE,col="red",lty="dashed")
+legend(0.88, 0.65, legend=c("g_1", "g_2"),
+       col=c("black", "red"), lty=1:2, cex=0.8)
+```
+
+## Aufgabe 4: Vektoren & Matrizen
+
+- Vektor *A* mit den Quadratzahlen 1, 4, 9, ..., 400 
+- Vektoren *B* und *C* aus den ersten bzw. letzten zehn Einträgen von *A*. 
+- Vektor *D* mit 50 Einträgen mit Muster ACCB
+- Erzeugen Sie aus *D* die 10x5 Matrix *M*. 
+
+## Aufgabe 4: Lösung
+
+```{r B1A4_L, eval=T,echo=T}
+options(width = 50)
+n<-c(1:20)
+n
+A<-n^2
+A
+B<-A[1:10]
+C<-A[11:20]
+D<-c(A,C,C,B)
+
+M<-matrix(D,nrow = 10)
+```
+
+
+## Aufgabe 5: Schleifen
+
+- Erstellen Sie einen Vektor **iters** für Anzahl der Iterationen, beginnend bei 10, endend bei 100, und in 10er Schritten. 
+
+- Erstellen Sie einen Outputvektor **times**, in dem die Zeit eingetragen werden soll. 
+
+- Definieren Sie die erste *for*-Schleife von 1 bis zur Länge von **iters**, die
+    + sich die Anzahl der gewünschten Iterationen aus **iters** zieht
+    + die Zeitmessung startet (x=Sys.time())
+    + pro Iteration eine normalverteilte Zufallsvariable mit n=10000 Ziehungen erstellt (dummy=rnorm(1e5), zweite Schleife) und die Summary davon bestimmt (dummy2<-summary(dummy), entspricht Min., Max., Quantile)
+    + die Zeit in der Variablen **times** abspeichert 
+    
+- Plotten Sie **iters** gegen **times**!
+    
+## Aufgabe 5: Lösung (1)
+    
+```{r B1A5_L, eval=T,echo=T}
+#iterations to time
+iters<-seq(10,100,by=10)
+ 
+#output time vector for  iteration sets
+times<-numeric(length(iters))
+ 
+```
+
+## Aufgabe 5: Lösung (2)
+    
+```{r B1A5_L2, eval=T,echo=T}
+#loop over iteration sets
+for(val in 1:length(iters)){
+  cat(val,' of ', length(iters),'\n')
+  to.iter<-iters[val]
+     
+  #start time
+  strt<-Sys.time()
+   
+  #same for loop as before
+  for(i in 1:to.iter){
+    to.ls<-rnorm(1e5)
+    to.ls<-summary(to.ls)
+  }
+   
+  #end time
+  times[val]<-Sys.time()-strt
+}
+```
+
+## Aufgabe 5: Lösung (3)
+
+```{r, eval=F}
+#plot the times
+to.plot<-data.frame(iters,times)
+ggplot2::ggplot(to.plot,aes(x=iters,y=times)) + 
+    geom_point() +
+    geom_smooth() + 
+    theme_bw() + 
+    scale_x_continuous('No. of loop iterations') + 
+    scale_y_continuous ('Time in seconds')
+
+```
+
+## Aufgabe 5: Lösung (4)
+
+```{r, eval=T,echo=F,fig.width=4,fig.height=3}
+#plot the times
+to.plot<-data.frame(iters,times)
+ggplot(to.plot,aes(x=iters,y=times)) + 
+    geom_point() +
+    geom_smooth() + 
+    theme_bw() + 
+    scale_x_continuous('No. of loop iterations') + 
+    scale_y_continuous ('Time in seconds')
+
+```
+
+## Aufgabe 6: Dateneingabe
+
+- Laden Sie den Datensatz *iris*. 
+- Ändern Sie die Klasse von *data.frame* zu *data.table*.
+- Wie viele Einträge sind pro Spezies vorhanden? 
+- Wie lang und breit sind im Mittel die Blätter pro Spezie? Nutzen Sie dazu die Funktion *lapply()*.
+- Definieren Sie eine neue Spalte als Produkt der Kelchblattlänge und -breite. 
+- Wie groß ist die mittlere Differenz der Blattlänge (Kelch - Blüte) in der Spezies *setosa*?
+
+## Aufgabe 6: Lösung (1)
+
+```{r B1A6_l, eval=T,echo=T}
+data(iris)
+head(iris)
+
+```
+
+## Aufgabe 6: Lösung (2)
+
+```{r}
+getDTthreads()
+setDTthreads(1)
+
+setDT(iris)
+
+iris[,.N,Species]
+```
+
+
+## Aufgabe 6: Lösung (3)
+
+```{r}
+iris[,lapply(.SD,mean),Species]
+
+
+```
+
+## Aufgabe 6: Lösung (4)
+
+```{r,fig.width=4,fig.height=3}
+iris[,test := Sepal.Length*Sepal.Width]
+iris[,hist(test)]
+```
+
+## Aufgabe 6: Lösung (5)
+
+```{r}
+iris[Species=="setosa",mean(Sepal.Length - Petal.Length)]
+iris[,mean(Sepal.Length - Petal.Length),Species]
+```
+
