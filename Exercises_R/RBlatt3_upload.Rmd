@@ -1,0 +1,182 @@
+---
+title: "Modul Statistische Aspekte der Analyse \n molekularbiologischer und genetischer Daten"
+subtitle: "R-Blatt 3: Regressionsmodelle in R"
+author: "Janne Pott"
+date: "WS 2021/22"
+output: pdf_document
+---
+
+
+```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
+setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
+.libPaths("C:/Program Files/R/R-4.1.1/library")
+
+# Fuer diese Uebung notwenige Pakete
+library(knitr)
+library(data.table)
+library(MASS)
+library(nlme)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+In dieser Übung wird R genutzt, um verschiedene Regressionsmodelle zu testen. 
+
+# Lineare Regression 
+## Beispiele
+In dem ersten Teil der Übung beschäftigen wir uns mit einfacher linearer Regression. Dazu wird der Datensatz *SNP.RData* verwendet. 
+
+```{r B3A1_1}
+loaded1<-load("data/SNP.RData")
+loaded1
+var<-colnames(myDat)
+dummy1<-c("Durchlaufende ID-Nummer","Merkmal/Phänotyp"	,"Geschlecht","Genotyp")
+dummy2<-c(NA,"kontinuierlich","1 = Mann; 2 = Frau","0 = AA; 1 = AB; 2 = BB")
+dumTab<-data.frame(var,dummy1,dummy2)
+knitr::kable(dumTab, position = "!b",
+             caption = "Parameterbeschreibung zu Aufgabe 1 (Blatt 3)",
+             col.names = c("Variable","Beschreibung","Codierung / Einheit"))
+```
+
+Eine einfache lineare Regression $y_i=\beta_0 + \beta_1 * x_i + \epsilon_i$ für $i=1,...,n$ kann mit dem Befehl *lm()* durchgeführt werden. Die abhängige Variable ist in diesem Beispiel der *trait*, die unabhängigen Variablen sind *sex* und *SNP*. 
+Wenn man *summary()* auf ein *lm-Objekt* anwendet, werden die Schätzer der Regression ausgegeben. Die Güte des Models kann am adjustierten $r^2$ (wie viel Varianze der abhängigen Variablen wird erklärt? Je größer, desto besser), Log-Likelihood (je größer desto besser) oder Akaikes "An Information Criterion" (AIC, je kleiner desto besser) abgelesen werden. 
+
+```{r B3A1_2}
+mod1<-lm(trait~sex,data=myDat)
+summary(mod1)
+summary(mod1)$adj.r.squared
+logLik(mod1)
+AIC(mod1)
+boxplot(myDat$trait ~ myDat$sex)
+```
+
+Diese Regression zeigt uns, dass das Geschlecht einen starken Einfluss auf den *trait* hat: Frauen haben deutlich höhere Werte als Männer. 
+
+Um eine multiple lineare Regression zu bestimmen, werden die zusätzlichen unabhängigen Variablen einfach mit "+" ergänzt. Um eine Interaktion dieser zu bestimmen, nutzt man "*". 
+
+Um genetische Modelle zu testen, kann man den SNP in Wahrscheinlichkeitsvektoren aufspalten. Anschließend kann man diese verwenden, um zum Beispiel das rezessive Modell (bzgl. Allel B) zu testen. 
+
+```{r B3A1_3}
+wskBB<-c()
+wskBB[myDat$SNP==2]<-1
+wskBB[myDat$SNP!=2]<-0
+mod2<-lm(myDat$trait ~ wskBB)
+summary(mod2)
+```
+
+## Aufgaben
+
+a) Untersuchen Sie die Effekte von *sex* und *SNP* auf *trait* mittels linearer Regression!
+
+b) Untersuchen Sie die multiplen Effekte und die Interaktion der Einflussvariablen *sex* und *SNP*!
+
+c) Welche von den vier Modellen ist besser geeignet, um *trait* zu beschreiben? Begründen Sie Ihre Entscheidung!
+
+d) Welches genetische Modell wird hier verwendet?
+
+e) Erstellen Sie je einen Wahrscheinlichkeits-Vektor pro Genotyp **AA**, **AB** und **BB** (1 = dieser Genotyp trifft zu, 0 = trifft nicht zu).
+
+f) Erstellen Sie nun je einen Vektor pro genetischen Modell (additiv, dominant, rezessiv). (Hinweis: Überlegen Sie zuerst, welchen der Vektoren Sie bereits haben (Teilaufgabe d))
+
+g) Untersuchen Sie die Effekte der verschiedenen Modelle auf *trait* mittels lineare Regression (univariat)! Welches Modell ist am besten geeignet? Wie könnten Sie Ihr Ergebnis testen?
+
+h) Können wir annehmen, dass der SNP auf den Autosomen liegt, oder könnte es sich auch um einen X-chromosomalen SNP handeln? Begründen Sie Ihre Antwort. 
+
+\newpage
+
+# Logistische / Proportional Odds Regression
+## Beispiele
+In dieser Aufgabe soll der kontinuierlicher Phänotyp aus der vorherigen Aufgabe in einen binären bzw. kategorialen zerlegt werden. Ein praktisches Beispiel, wo so etwas genutzt wird, ist der BMI. Er wird als kontinuierliches Merkmal bestimmt, aber je nach Analyse will man nur wissen, ob es Unterschiede zwischen Gruppen (Untergewicht (<20), Normalgewicht (20-25), Übergewicht (25-30) oder Adipositas (>30)) gibt, oder auch nur zwischen Übergewicht ja/nein. Die Ergebnisse ähneln sich meistens bezüglich der Signifikanz, allerdings sagen die Schätzer etwas anderes aus.
+
+In diesem Beispiel wird aus *trait* zwei neue Variablen definiert: eine binäre Variabel (>mean), und eine Variable mit drei Kategorien (Terzile). 
+
+```{r B3A2_1}
+summary(myDat$trait)
+setDT(myDat)
+
+myDat[trait<mean(trait),trait_bin:=0]
+myDat[trait>mean(trait),trait_bin:=1]
+
+quantile(myDat$trait,probs = c(1/3,2/3))
+dum<-quantile(myDat$trait,probs = c(1/3,2/3))
+myDat[,trait_cat:=0]
+myDat[trait>dum[1],trait_cat:=trait_cat+1]
+myDat[trait>dum[2],trait_cat:=trait_cat+1]
+
+table(myDat$trait_bin,myDat$trait_cat)
+```
+
+Mit diesen beiden Variablen kann eine logistische mit *glm()* bzw. proportional odds Regression mit *polr()* aus dem Paket **MASS** durchgeführt werden. Wichtig: für die prop. odds Regression muss die abhängige Variable als Faktor übergeben werden!
+
+```{r B3A2_2}
+modB1<-glm(trait_bin ~ SNP, data=myDat, family = "binomial")
+modD1<-polr(as.factor(trait_cat) ~ SNP, data=myDat, Hess = T)
+summary(modB1)
+summary(modD1)
+
+```
+
+Hier gibt es keine erklärte Varianz mehr, aber AIC und Log-Likelihood kann ebenfalls bestimmt werden. 
+
+In der Summary zum polr gibt es keinen direkten p-Wert für die unabhängigen Variablen. Doch diesen kann man einfach aus den t values mittels *pnorm()* bestimmen. Neben der Normalverteilung sind weiter Verteilungen bereits in R definiert, z.B. *pchisq*, *pbinom* und *ppois*, zusammen mit den zugehörigen Dichtefunktionen (*dnorm*), Quantilfunktionen (*qnorm*) und eine Zufallsgenerator (*rnorm*).
+
+```{r B3A2_3}
+ctable1 <- coef(summary(modD1))
+p <- pnorm(abs(ctable1[, "t value"]), lower.tail = FALSE) * 2
+ctable1 <- cbind(ctable1, "p value" = p)
+ctable1
+```
+
+
+## Aufgaben
+
+a) Berechnen Sie den **Median** von *trait* und nutzen Sie diesen als Cut-off, um *trait* in einen binären Phänotyp *trait2* zu zerlegen. 
+
+b) Untersuchen Sie die univariaten und multivariaten Effekte von *sex* und *SNP* auf *trait2* mittels logistischer Regression! (Hinweis: Funktion *glm()* mit *family="binomial"*)
+
+c) Bestimmen Sie die **Quartile** von *trait*! Zerlegen Sie *trait* nun in einen 4-stufigen Phänotypen *trait3*, in dem Sie die Quartile als Kategorien nutzen. 
+
+d) Untersuchen Sie die univariaten und multivariaten Effekte von *sex* und *SNP* auf *trait3* mittels proportional odds regression! (Hinweis: Funktion *polr()* aus dem Paket **MASS** mit *Hess=T*)
+
+e) Vergleichen Sie Ihre Ergebnisse von b) und d) mit den Ergebnissen von Aufgabe 1
+
+\newpage
+
+# Nichtlineare Regression
+
+Dieses Kapitel ist nur ein Zusatz, da es in dieser Veranstaltung nicht direkt benötigt wird. 
+
+## Beispiele
+Ein bekanntes Beispiel für ein nichtlineares Regressionsmodell ist die Michaelis-Menten-Gleichung aus der Enzymkinetik: $v=\frac{V_{max}*c(S)}{c(S) + K_m}$. Sie beschreibt eine Sättigungsfunktion: Umsatzgeschwindigkeit *v* einer enzymatischen Reaktion in Abhängigkeit der Substratkonzentration *c(S)*. Dabei ist $V_{max}$ die maximale Geschwindigkeit und $K_{m}$ die Michaelis-Menten-Konstante. Die Geschwindigkeit ist zusätzlich vom Milieu abhängig (z.B. Zelltyp, ph-Wert, o.ä.). 
+
+```{r B3A3_1,eval=T,echo=F,warning=F}
+loaded1<-load("data/MichMenten.RData")
+var<-colnames(myDat)
+dummy1<-c("Substratkonzentration"	,
+          "Umsatzgeschwindigkeit, gemessen in Erwachsenen",
+          "Umsatzgeschwindigkeit, gemessen in Embryonen")
+dummy2<-c("in 10^-5 mol", "in mikromol/(mg Enzym)*min","in mikromol/(mg Enzym)*min")
+dumTab<-data.frame(var,dummy1,dummy2)
+knitr::kable(dumTab, position = "!b", escape = T,
+             caption = "Parameterbeschreibung zu Aufgabe 3 (Blatt 3)",
+             col.names = c("Variable","Beschreibung","Codierung / Einheit"))
+```
+
+In der nichtlineare Regression möchte man $V_{max}$ und $K_{m}$ gleichzeitig schätzen. Dies kann man in R mittels der Funktion *nls()* tun. Als Startwerte kann man z.B. die maximale Geschwindigkeit im Datensatz und die Hälfte davon nehmen. 
+
+```{r B3A3_2}
+vmaxA<-max(myDat$vA)
+kmA<-vmaxA/2
+modA<-nls(vA ~ vmax*cS/(cS+km), data=myDat,start = list(km=kmA,vmax=vmaxA))
+summary(modA)
+```
+
+
+## Aufgaben
+
+a) Bestimmen Sie $V_{max}$ und $K_m$ für Erwachsene und Embryonen getrennt, indem Sie die Funktion *nls()* und folgende Startwerte nutzen: $V_{max}=max(v)$ und $K_m=\frac12 max(v)$
+
+c) Was passiert wenn man die Startwerte weglässt?
+
+b) Fassen Sie die Ergebnisse in einem Plot zusammen und interpretieren Sie diesen!
