@@ -324,12 +324,20 @@ attach(myDat2)
 
 ## Aufgabe 2: Lösung a) - Deskription binär
 
-```{r, eval=T,echo=T}
+```{r, eval=T,echo=F}
 # binäre oder kategoriale Parameter
-myDat2[,.N,by=sex]
-myDat2[,.N,by=WHnd]
-myDat2[,.N,by=Fold]
-myDat2[,.N,by=Clap]
+x1=myDat2[,table(sex,WHnd)]
+x2=myDat2[,table(Fold,Clap)]
+rownames(x1) = c("Männer","Frauen")
+rownames(x2) = c("rechts","egal","links")
+
+knitr::kable(x1, position = "!b",digits =3,
+             caption = "Händigkeit",
+             col.names = c("rechts","links"))
+knitr::kable(x2, position = "!b",digits =3,
+             caption = "Klatschen & Armverschränken",
+             col.names = c("rechts","egal","links"))
+
 ```
 
 ## Aufgabe 2: Lösung a) - Deskription kontinuierlich
@@ -353,7 +361,7 @@ knitr::kable(tab, position = "!b",digits =3,
 
 ## Aufgabe 2: Lösung b) - Handlängenunterschiede Männer vs Frauen
 
-```{r}
+```{r, echo=F}
 par(mfrow=c(2,2))
 hist(WrHnd,breaks = 10,xlim = c(12,24),main="Histogram der Schreibhand",
      xlab="Schreibhandlänge")
@@ -379,7 +387,7 @@ knitr::kable(t(tab5[,2]), position = "!b",#digits =8,
 
 ## Aufgabe 2: Lösung c) - Handlängenunterschiede Schreib -vs Nichtschreibhand
 
-```{r}
+```{r, echo=F}
 female<-sex==2
 par(mfrow=c(2,2))
 hist(dif[female],breaks = 10,main="Histogram der Differenz (Frauen)",
@@ -388,43 +396,64 @@ boxplot(WrHnd[female], NWHnd[female], main="Boxplot - Frauen")
 hist(dif[!female],breaks = 10,main="Histogram der  Differenz (Männer)",
      xlab="Nicht-Schreibhandlänge")
 boxplot(WrHnd[!female],NWHnd[!female], main="Boxplot - Männer")
-par(mfrow=c(1,1))
-t.test(WrHnd[female],NWHnd[female],paired = T)
-t.test(WrHnd[!female],NWHnd[!female],paired = T)
+```
+
+## Aufgabe 2: Lösung c) - Handlängenunterschiede Schreib -vs Nichtschreibhand
+
+```{r}
+female<-sex==2
+p1 = t.test(WrHnd[female],NWHnd[female],paired = T)
+p2 = t.test(WrHnd[!female],NWHnd[!female],paired = T)
+
+tab6 = data.table(parameter =  c("WrHnd","NWHnd"),
+                  t_Test = c(p1$p.value,p2$p.value))
+tab6$t_Test<- format(tab6$t_Test, digits = 3)
+knitr::kable(t(tab6[,2]), position = "!b",#digits =8,
+             caption = "Student's t-Test der Differenz",
+             col.names = c("Frauen","Männer"))
 ```
 
 ## Aufgabe 2: Lösung d) - Beziehung binäre Variablen
 
-```{r}
+```{r, echo=F}
 filt1<-Fold!=0.5 & Clap!=0.5
-table(Fold[filt1],Clap[filt1])
-fisher.test(Fold[filt1],Clap[filt1]) 
+p1 = fisher.test(Fold[filt1],Clap[filt1]) 
 
 filt2<-Fold!=0.5 
-table(Fold[filt2],WHnd[filt2])
-fisher.test(Fold[filt2],WHnd[filt2]) 
+p2 = fisher.test(Fold[filt2],WHnd[filt2]) 
 
 filt3<-Clap!=0.5 
-table(Clap[filt3],WHnd[filt3])
-fisher.test(Clap[filt3],WHnd[filt3])
+p3 = fisher.test(Clap[filt3],WHnd[filt3])
+
+tab7 = data.table(parameter =  c("Fold vs Clap",
+                                 "Fold vs Whnd",
+                                 "Clap vs Whnd"),
+                  Fisher_Test = c(p1$p.value,
+                             p2$p.value,
+                             p3$p.value))
+tab7$Fisher_Test<- format(tab7$Fisher_Test, 
+                          digits = 3)
+knitr::kable(t(tab7[,2]), position = "!b",#digits =8,
+             caption = "Fisher's Exact Test",
+             col.names = tab7$parameter)
+```
+
+## Aufgabe 2: Lösung e) - Korrelation Frauen
+
+```{r, echo=F}
+corTab<-cor.prob(myDat2[female,c(8,3,4,9)])
+knitr::kable(corTab, position = "!b",digits =5,
+             caption = "Correlation - spearmans rho \ p-value",
+             col.names = c("height","WrHnd","NWHnd","dif"))
 
 ```
 
-## Aufgabe 2: Lösung e) - Korrelation
+## Aufgabe 2: Lösung e) - Korrelation Männer
 
 ```{r}
-cor.prob(myDat2[female,c(8,3,4,9)])
-cor.prob(myDat2[!female,c(8,3,4,9)])
+corTab<-cor.prob(myDat2[!female,c(8,3,4,9)])
+knitr::kable(corTab, position = "!b",digits =5,
+             caption = "Correlation - spearmans rho \ p-value",
+             col.names = c("height","WrHnd","NWHnd","dif"))
 
 ```
-
-
-
-Ein Blick auf die Histogramme zeigt, dass die Daten von Schreib- und Nicht-Schreibhand gut genug normal-verteilt sind. Daher kann hier ein T-Test durchgeführt werden. Es gibt signifikante Unterschiede sowohl in der Schreibhand als auch in der anderen Hand.
-
-Um die Differenz zu testen, kann man entweder einen gepaarten Test für Schreib- und Nicht-Schreibhand durchführen oder direkt die Differenz testen. Es gibt nur bei Frauen signifikante Unterschiede zwischen Schreib- und Nicht-Schreibhand, bei Männern nicht. 
-
-Es gibt nur zwischen Klatschen und Händigkeit eine signifikante Beziehung. 
-
-Bei Frauen gibt es eine signifkante Korrelation zwischen der Länge der Nicht-Schreibhand und der Differenz der Handlängen, bei Männern nicht. 
-
