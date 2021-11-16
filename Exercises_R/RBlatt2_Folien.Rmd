@@ -320,6 +320,17 @@ myDat[,dif:=WrHnd-NWHnd]
 filt<-myDat$dif>mean(myDat$dif,na.rm = T) + 4*sd(myDat$dif,na.rm = T) 
 myDat2<-myDat[!filt,]
 attach(myDat2)
+
+cor.prob <- function (X, dfr = nrow(X) - 2) {
+  R <- cor(X, use="pairwise.complete.obs",method="pearson")
+  above <- row(R) < col(R)
+  r2 <- R[above]^2
+  Fstat <- r2 * dfr/(1 - r2)
+  R[above] <- 1 - pf(Fstat, 1, dfr)
+  R[row(R) == col(R)] <- NA
+  R
+}
+
 ```
 
 ## Aufgabe 2: Lösung a) - Deskription binär
@@ -441,7 +452,8 @@ knitr::kable(t(tab7[,2]), position = "!b",#digits =8,
 ## Aufgabe 2: Lösung e) - Korrelation Frauen
 
 ```{r, echo=F}
-corTab<-cor.prob(myDat2[female,c(8,3,4,9)])
+filt = !is.na(myDat2$sex) & !is.na(myDat2$height) & !is.na(myDat2$WrHnd) & !is.na(myDat2$NWHnd) & !is.na(myDat2$WHnd) & !is.na(myDat2$Clap) & !is.na(myDat2$Fold)
+corTab<-cor.prob(myDat2[female & filt,c(8,3,4,9)])
 knitr::kable(corTab, position = "!b",digits =5,
              caption = "Correlation - spearmans rho \ p-value",
              col.names = c("height","WrHnd","NWHnd","dif"))
@@ -451,7 +463,7 @@ knitr::kable(corTab, position = "!b",digits =5,
 ## Aufgabe 2: Lösung e) - Korrelation Männer
 
 ```{r}
-corTab<-cor.prob(myDat2[!female,c(8,3,4,9)])
+corTab<-cor.prob(myDat2[!female & filt,c(8,3,4,9)])
 knitr::kable(corTab, position = "!b",digits =5,
              caption = "Correlation - spearmans rho \ p-value",
              col.names = c("height","WrHnd","NWHnd","dif"))
