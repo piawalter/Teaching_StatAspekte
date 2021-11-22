@@ -18,13 +18,13 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of Teaching_WS2122 is to collect and update all exercises for my class (still ongoing). 
+The goal of this repository is to collect and update all exercises for my class (still ongoing). 
 
-This is not planned as R package, so no installation needed, just fork the repository and work within your own github/git/RStudio enviroment. 
+This is not planned as R package, so no installation needed, just fork the repository and work within your own github/git/RStudio environment. 
 
 ## Classic exercises
 
-In this directory, there are six classic exercise sheets filed. Classic means that the exercises can be solved by pen & paper, you do not need R. They are quite similar to the assigments in the final exam (also to be solved by pen & paper, without any additional material or tools). The topics of the sheets are:
+In this directory, there are six classic exercise sheets filed. Classic means that the exercises can be solved by pen & paper, you do not need R. They are quite similar to the assignments in the final exam (also to be solved by pen & paper, without any additional material or tools). The topics of the sheets are:
 
 1) Biological basics
 2) Statistical basics
