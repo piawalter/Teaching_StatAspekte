@@ -6,7 +6,6 @@ date: "WS 2021/22"
 output: pdf_document
 ---
 
-
 ```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
 setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
 .libPaths("C:/Program Files/R/R-4.1.1/library")
@@ -14,8 +13,8 @@ setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
 # Fuer diese Uebung notwenige Pakete
 library(knitr)
 library(data.table)
-library(MASS)
-library(nlme)
+setDTthreads(1)
+library(ggplot2)
 
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -150,22 +149,22 @@ b) Sie sollten nun ein Objekt mit den Variablen *ID*, *X-Intensität*, *Y-Intens
 
 # Principal Component Analysis (PCA)
 
-In dieser Aufgabe sollen die Eigenvektoren von genetischen Daten erzeugt werden. Dafür wird ein Teil der Daten von 1000 Genomes (1KG, Phase 1, release 3) verwendet. Zusätzlich zu R wird hier PLINK verwendet, da dieses Programm effizienter große Datenmengen verarbeiten kann [PLINK](https://www.cog-genomics.org/plink/1.9/). 
+In dieser Aufgabe sollen die Eigenvektoren von genetischen Daten erzeugt werden. Dafür wird ein Teil der Daten von 1000 Genomes (1KG, Phase 1, release 3) verwendet. Zusätzlich zu R wird hier [PLINK](https://www.cog-genomics.org/plink/2.0/) verwendet, da dieses Programm effizienter große Datenmengen verarbeiten kann. 
 
-Diese Aufgabe ist als Tutorial aufgebaut, in dem jeder Schritt angefangen wird, Sie aber diese zuende führen sollen. 
+Diese Aufgabe ist als Tutorial aufgebaut: jeder Schritt wird angefangen und soll von Ihnen vervollständigt werden. 
 
-Als erstes sollte der Pfad zu PLINK definiert werden. 
+Als erstes soll der Pfad zu PLINK definiert werden. Als kleiner Test wird Plink einmal aufgerufen.
 
-```{r B4A3_1, eval=F}
+* Falls 127 zurückggeben wird, hat R die Plink .exe nicht gefunden - bitte Pfad prüfen!
+
+```{r B4A3_1, eval=T,echo=T}
 plink_call<-"C:/Programme/plink2/plink2"
-plink_call2<-"/c/Programme/plink2/plink2"
 
-# testing plink by getting all the help information
-call0<-paste(plink_call,"--help > Exercises_R/PCA/plink2-help.txt", sep=" ")
-call0<-paste(plink_call2,"--help > Exercises_R/PCA/plink2-help2.txt", sep=" ")
-call0
+# test if plink can start
+system(plink_call)
 
-system(call0)
+# print plink start (by default printed in the render console, not the pdf or html output)
+cat(system(plink_call, intern = TRUE), sep = '\n')
 
 ```
 
@@ -224,36 +223,43 @@ Jetzt prunen Sie die SNPs mit PLINK, d.h. Sie prüfen, welche SNPs in hohem LD m
 a.	Input:--bfile 1KG_PCA
 b.	SNPs einschränken: --extract mySNPs_filtered.txt
 c.	Samples einschränken: --keep mySamples.txt
-d.	LD-Pruning-Parameter festlegen: --indep-pairphase 50 5 0.2 
+d.	LD-Pruning-Parameter festlegen: --indep-pairwise 50 5 0.2 
 e.	Output: --out pruned_filter
 
-Was bedeuten die drei Zahlen hinter dem --indep-pairphase Befehl?
+Was bedeuten die drei Zahlen hinter dem --indep-pairwise Befehl?
+
+**Hinweis**: Es sollten am Ende 117,351 SNPs sein. 
+
 ```{r B4A3_4, eval=F,echo=T}
-call1<-paste(plink_call," --bfile data/1KG_PCA",
+call1<-paste(plink_call,
+             "--bfile data/1KG_PCA",
              "--extract PCA/mySnps_filtered.txt",
              "--keep PCA/mySamples.txt",
-             "--indep-pairphase 50 5 0.2",
+             "--indep-pairwise 50 5 0.2",
              "--out PCA/pruning_filter")
 system(call1)
 ```
-**Hinweis**: Es sollten am Ende 121,878 SNPs sein. 
+
 
 ### Datenvorbereitung - Datensatz erstellen
 Erstellen Sie jetzt mit PLINK ein neues .bed-File, dass nur noch die geprunten SNPs und die gewünschten Samples (aus 2) enthält (--bfile, --extract, --keep, und --make-bed). 
 
 ```{r B4A3_5, eval=F,echo=T}
-call2<-paste(plink_call,"--bfile data/1KG_PCA",
+call2<-paste(plink_call,
+             "--bfile data/1KG_PCA",
              "--extract PCA/pruning_filter.prune.in",
              "--keep PCA/mySamples.txt",
-             "--make-bed --out PCA/pruned_data", sep=" ")
+             "--make-bed --out PCA/pruned_data")
 system(call2)
 ```
 
 ### PCA berechnen
-Jetzt kann mit den neuen Files die PCA ausgerechnet werden (--bfile, --pca, --out)
+Jetzt kann mit den neuen Files die PCA ausgerechnet werden (--bfile, --pca, --out):
+
 ```{r B4A3_6, eval=F,echo=T}
-call3<-paste(plink_call,"--bfile PCA/pruned_data",
-             "--pca --out PCA/pca_out", sep=" ")
+call3<-paste(plink_call,
+             "--bfile PCA/pruned_data",
+             "--pca --out PCA/pca_out")
 system(call3)
 ```
 
@@ -270,7 +276,7 @@ Was würden Sie erwarten, wenn alle 4 Ethnien in die Analyse eingeflossen wären
 
 ```{r B4A3_7, eval=F,echo=T}
 pca2values<-read.table("PCA/pca_out.eigenval")$V1
-pca2vector<-read.table("PCA/pca_out.eigenvec",stringsAsFactors=F,sep=" ")
+pca2vector<-read.table("PCA/pca_out.eigenvec",stringsAsFactors=F,sep="\t")
 
 # to continue ...
 
