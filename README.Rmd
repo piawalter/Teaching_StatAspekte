@@ -13,30 +13,41 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Teaching_WS2122
+# Overview
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of Teaching_WS2122 is to collect and update all exercises for my class. 
+The goal of Teaching_WS2122 is to collect and update all exercises for my class (still ongoing). 
 
 This is not planned as R package, so no installation needed, just fork the repository and work within your own github/git/RStudio enviroment. 
 
-## To do
+## Classic exercises
 
-* Test ob transfer geklappt hat
-* Test2
-* Test3
-* Test 4
-* Test5
-* Add all exercises
-* Update exercises after students feedback (typos, understandability of the tasks, etc.)
-* Add solutions?
+In this directory, there are six classic exercise sheets filed. Classic means that the exercises can be solved by pen & paper, you do not need R. They are quite similar to the assigments in the final exam (also to be solved by pen & paper, without any additional material or tools). The topics of the sheets are:
 
-# Part 1: Classic exercises
-In this directory, all classic exercises are given. Classic means, that the exercises can be solved by pen & paper, you do not need R. They are quite similar to the assigments in the final exam (also to be solved by pen & paper, without any additional material or tools). 
+1) Biological basics
+2) Statistical basics
+3) Statistical concepts in genetics
+4) Populationgenetics & SNP-Arrays
+5) Imputation & genome-wide association analyses
+6) Gene expression analyses
 
-# Part 2: R exercises
+Some of the exercises can be sumbitted and will be corrected. Please use the Moodle course for this. 
 
-Every other week, I add a short R exercise.
+## R exercises
 
+In this directory, there are six R exercise sheets filed. The data necessary for some of the exercises are provided in the Moodle course. While coding is not poart of the final exam, this exercises aim to help you understand and interpret statistical results better, which will be part of the exam. The topics of the R-sheets are:
+
+1) Introduction in R
+2) Descriptive statistics in R
+3) Regressionmodels in R
+4) Visualisation of some statistical concepts in genetics 
+5) Metaanalyses and Online-Tools
+6) Mendelian Randomisation
+
+Code for all exercises can be sumbitted and will be corrected or commented. 
+
+## Git exercises
+
+For those interested in git, there is a git directory with a small git introduction and an exercise. 
