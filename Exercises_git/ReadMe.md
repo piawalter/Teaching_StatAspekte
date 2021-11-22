@@ -17,7 +17,7 @@
 4) lokale Arbeitskopie (Stichwort clone).
     * lokal git-Ordner erstellen (Bsp: "C:/user/docs/myGitProjects")
     * Terminal in diesem Ordner öffnen
-    * git clone https://github.com/<username>/WS2021_test/
+    * git clone https://github.com/username/Teaching_StatAspekte/
     * Wechsel in die lokale Arbeitskopie
     * Jetzt kann git genutzt werden :)
     * s. https://rogerdudler.github.io/git-guide/index.de.html
