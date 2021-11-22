@@ -6,7 +6,6 @@ date: "WS 2021/22"
 output: pdf_document
 ---
 
-
 ```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
 r_on_server = FALSE
 if(r_on_server==T) basicpath = "/net/ifs2/san_projekte/projekte/genstat/"  else basicpath =  "C:/Users/janne/Documents/R/myRepositories/Teaching_WS2122/"
@@ -22,6 +21,7 @@ library(knitr)
 # library(foreach)
 # library(doParallel)
 library(data.table)
+setDTthreads(1)
 # library(readxl)
 # library(lubridate)
 # library(MASS)
@@ -57,7 +57,7 @@ mit
 In diesem Beispiel verwenden wir den Datensatz *verwandtschaft.RData*. 
 
 ```{r B4A1_1, eval=T, echo=T}
-loaded<-load("data/verwandtschaft.RData")
+loaded<-load("data2/verwandtschaft.RData")
 loaded
 dim(genotypes)
 class(genotypes)
@@ -111,7 +111,7 @@ d) Welche Familienstruktur könnte die beobachteten Verwandtschaftsbeziehungen e
 Bei der Genotypisierung mittels SNP-Array kann meistens das genetische Geschlecht bestimmt werden. In wenigen Ausfällen ist die Intensität der X- bzw. Y-SNPs zu verrauscht um eine Aussage zu treffen. Diese werden dann als *unknown* klassifiziert. Um hier zu entscheiden, ob ein Sample gefiltert werden muss, benutzt man XY-Plots. 
 
 ```{r B4A2_1}
-loaded<-load("data/XYPlots.RData")
+loaded<-load("data2/XYPlots.RData")
 loaded
 dim(samples);colnames(samples)
 rownames(samples)[c(1:10,291:300)]
@@ -199,9 +199,9 @@ cat(system(plink_call, intern = TRUE), sep = '\n')
 |V6| |
 
 ```{r B4A3_2, eval=T,echo=T}
-myTab<-read.table("data/mySnps.txt")
+myTab<-read.table("data2/mySnps.txt")
 dim(myTab)
-rslist<-fread("data/1KG_PCA.bim",sep="\t",stringsAsFactors=F)
+rslist<-fread("data2/1KG_PCA.bim",sep="\t",stringsAsFactors=F)
 dim(rslist)
 head(rslist)
 
@@ -224,7 +224,7 @@ Erstellen Sie eine Sample Liste mit Individuen aus Asien, Afrika und Europa! Nut
 |V6| |
 
 ```{r B4A3_3, eval=T,echo=T}
-fam.data<-read.table("data/1KG_PCA.fam",stringsAsFactors=F,sep=" ")
+fam.data<-read.table("data2/1KG_PCA.fam",stringsAsFactors=F,sep=" ")
 dim(fam.data)
 head(fam.data)
 ethno<-substr(fam.data$V2,1,3)
@@ -248,7 +248,7 @@ Was bedeuten die drei Zahlen hinter dem --indep-pairwise Befehl?
 
 ```{r B4A3_4, eval=F,echo=T}
 call1<-paste(plink_call,
-             "--bfile data/1KG_PCA",
+             "--bfile data2/1KG_PCA",
              "--extract PCA/mySnps_filtered.txt",
              "--keep PCA/mySamples.txt",
              "--indep-pairwise 50 5 0.2",
@@ -262,7 +262,7 @@ Erstellen Sie jetzt mit PLINK ein neues .bed-File, dass nur noch die geprunten S
 
 ```{r B4A3_5, eval=F,echo=T}
 call2<-paste(plink_call,
-             "--bfile data/1KG_PCA",
+             "--bfile data2/1KG_PCA",
              "--extract PCA/pruning_filter.prune.in",
              "--keep PCA/mySamples.txt",
              "--make-bed --out PCA/pruned_data")
