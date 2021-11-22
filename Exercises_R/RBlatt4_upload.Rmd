@@ -1,0 +1,277 @@
+---
+title: "Modul Statistische Aspekte der Analyse \n molekularbiologischer und genetischer Daten"
+subtitle: "R-Blatt 4: Visualisierung statistischer Konzepte"
+author: "Janne Pott"
+date: "WS 2021/22"
+output: pdf_document
+---
+
+
+```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
+setwd("D:/Lehre/WS2122_Statistik/uebung/RUebungen/")
+.libPaths("C:/Program Files/R/R-4.1.1/library")
+
+# Fuer diese Uebung notwenige Pakete
+library(knitr)
+library(data.table)
+library(MASS)
+library(nlme)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+In dieser Übung wird R genutzt, um verschiedene statistische Konzepte zu visualisieren. 
+
+# Verwandtschaft
+## Beispiele
+
+Zur paarweisen Schätzung von Verwandtschaften haben Sie in der Vorlesung den Kinship-Schätzer kennen gelernt: 
+
+$$ \hat k_{i,j} = \frac{1}{M} \sum_{m=1}^{M} \frac{(g_{m,i}-2*p_{m,B})(g_{m,j}-2*p_{m,B})}{4*p_{m,B}*p_{m,A}} $$
+
+mit 
+
+* $M$ als Anzahl der betrachteten biallelischen SNPs (Allel A und B)
+
+* $p_{m,B}$ als Allelfrequenz des SNPs m bezüglich Allel B
+
+* $g_{m,i}$ als Genotyp des SNPs m von Person i bezüglich Allel B
+
+In diesem Beispiel verwenden wir den Datensatz *verwandtschaft.RData*. 
+
+```{r B4A1_1, eval=T, echo=T}
+loaded<-load("data/verwandtschaft.RData")
+loaded
+dim(genotypes)
+class(genotypes)
+length(allelfreq)
+hist(allelfreq)
+```
+Im Datensatz sind zwei Parameter, einmal *genotypes*, eine Genotyp-Matrix von 10 Personen mit 30,000 SNPs, und *allelfreq*, ein Vektor der Allelfrequenzen pro SNP aus *genotypes* bezüglich Allel B. 
+
+Im Histogramm kann man erkennen, dass die Allelfrequenzen in etwa gleichverteilt sind. Das heißt, dass die *rare* SNPs (Allelfrequenz<5%) gleich-häufig sind wie die *common* SNPs. 
+
+Um den Kinship-Schätzer zu bestimmen, kann man zwei Schleifen für Person *i* und *j* nutzen: 
+
+```{r B4A1_2}
+p2<-2*allelfreq
+p4<-4*allelfreq*(1-allelfreq)
+
+K<-matrix(NA,10,10)
+for(i in 1:10){
+  # i=1
+  for(j in i:10){
+    # j=2
+    g_i<-genotypes[,i]-p2
+    g_j<-genotypes[,j]-p2
+    x<-sum(g_i*g_j/p4)
+    k_ij<-x/30000
+    K[i,j]<-k_ij
+    K[j,i]<-k_ij
+  }
+    
+}
+
+knitr::kable(K,digits = 3, caption = "Verwandschaftsmatrix mittels Schleife")
+```
+
+## Aufgaben
+
+a) Die Verwandtschaftsmatrix kann auch mittels Matrix-Operation bestimmt werden. Definieren Sie dazu eine Hilfsmatrix *h*, die auf die Allelfrequenzen und Anzahl der SNPs adjustiert ist, und bilden Sie das Matrixprodukt $H=h^T * h$. Stimmt dieses Produkt mit *K* überein?
+
+$$ h_{m,i} = \frac{(g_{m,i}-2*p_{m,B})}{\sqrt{M*4*p_{m,B}*p_{m,A}}} $$
+
+b) Warum gilt: $$ \hat k_{i,j} \approx 0.5$$
+
+c) Wie viele paarweise Verwandtschaften (von Grad 1,2, … , unverwandt) beobachten Sie?
+
+d) Welche Familienstruktur könnte die beobachteten Verwandtschaftsbeziehungen erklären?
+
+\newpage 
+
+# XY-Plot
+## Beispiele
+Bei der Genotypisierung mittels SNP-Array kann meistens das genetische Geschlecht bestimmt werden. In wenigen Ausfällen ist die Intensität der X- bzw. Y-SNPs zu verrauscht um eine Aussage zu treffen. Diese werden dann als *unknown* klassifiziert. Um hier zu entscheiden, ob ein Sample gefiltert werden muss, benutzt man XY-Plots. 
+
+```{r B4A2_1}
+loaded<-load("data/XYPlots.RData")
+loaded
+dim(samples);colnames(samples)
+rownames(samples)[c(1:10,291:300)]
+dim(daten);colnames(daten)[c(1,200,201,300)]
+rownames(daten)[1:3]
+```
+Für dieses Beispiel liegen Daten von 300 SNPs und 300 Samples vor. Zu den Samples (IDs 1-300) ist das Geschlecht mitangegeben, einmal aus der Datenbank (*sex_datenbank*) und einmal wie es beim Calling bestimmt wurde (*sex_computed*). Die SNPs haben die IDs mit Chromosomenangabe, d.h. die X-chromosomalen SNPs haben die IDs *X:1* - *X:200*, die Y-chromosomalen *Y:1* - *Y:100*. Pro SNP und Sample liegen die Intensitäten der Allele *A* und *B* und der wahrscheinlichste Genotyp vor (0=*AA*, 1=*AB*, 2=*BB*, -1=*NA*).
+
+Die X-Heterozygosität ist ein weiterer Marker der Qualität: Männer haben nur ein X, daher sollten sie eine Heterozygosität von 0 haben. Für Frauen erwartet man 0.25 (Erwartungswert der Heterozygoten bei eine Beta-Verteilung mit $\alpha=\beta=0.5$). 
+
+Herleitung des Erwartungswert mit beta-verteilter Allelfrequenz *x*: 
+
+\begin{align}
+E(X=AB) &= \int 2*x*(1-x) *\frac{x^{\alpha-1}*(1-x)^{\beta-1}}{B(\alpha,\beta)} dx \notag \\
+&= \int \frac{2}{B(\alpha,\beta)} x^{\alpha} * (1-x)^{\beta} dx \notag \\
+&= \frac{2}{B(\alpha,\beta)} * \int x^{\alpha} * (1-x)^{\beta} dx \notag \\
+&= \frac{2*B(\alpha+1,\beta+1)}{B(\alpha,\beta)} \notag \\
+&= 2*0.3926991/3.141593 = 0.25 \notag
+\end{align}
+
+```{r B4A2_2}
+filt<-grepl("genotype",rownames(daten))
+geno<-daten[filt,]
+intent<-daten[!filt,]
+
+snpDataX<-geno[,1:200]
+dim(snpDataX)
+snpDataX<-t(snpDataX)
+countGenos<-function(x) {return(as.numeric(table(factor(x,levels=-1:2))))}
+nrGenos<-apply(snpDataX,2,countGenos)
+nrGenos<-t(nrGenos)
+colnames(nrGenos)<-c("miss","AA","AB","BB")
+heteroRate<-apply(nrGenos,1,function(x) x[3]/sum(x[2:4]))
+hist(heteroRate)
+```
+
+
+## Aufgaben
+
+a) Für den XY-Plot brauchen wir die Gesamtintensitäten. Bilden Sie daher zuerst den Mittelwert der Intensität für Allel A und B pro SNP und bilden Sie dann die jeweilige mittlere Intensität aller X-SNPs und aller Y-SNPs pro Sample! 
+
+b) Sie sollten nun ein Objekt mit den Variablen *ID*, *X-Intensität*, *Y-Intensität,* *X-Heterozygosität*, *sex_datenbank* und *sex_computed* pro Sample haben. Erzeugen Sie nun folgende drei Plots und markieren Sie in diesen Plots Ausreißer (widersprüchliche Geschlechtsangabe, zu hohe/niedrige Intensitäten, auffällige Heterozygosität):
+  
+    i.	X-Intensität – Y-Intensität
+  
+    ii.	X-Intensität – X-Heterozygosität
+  
+    iii.	Y-Intensität – X-Heterozygosität
+
+\newpage
+
+# Principal Component Analysis (PCA)
+
+In dieser Aufgabe sollen die Eigenvektoren von genetischen Daten erzeugt werden. Dafür wird ein Teil der Daten von 1000 Genomes (1KG, Phase 1, release 3) verwendet. Zusätzlich zu R wird hier PLINK verwendet, da dieses Programm effizienter große Datenmengen verarbeiten kann [PLINK](https://www.cog-genomics.org/plink/1.9/). 
+
+Diese Aufgabe ist als Tutorial aufgebaut, in dem jeder Schritt angefangen wird, Sie aber diese zuende führen sollen. 
+
+Als erstes sollte der Pfad zu PLINK definiert werden. 
+
+```{r B4A3_1, eval=F}
+plink_call<-"C:/Programme/plink2/plink2"
+plink_call2<-"/c/Programme/plink2/plink2"
+
+# testing plink by getting all the help information
+call0<-paste(plink_call,"--help > Exercises_R/PCA/plink2-help.txt", sep=" ")
+call0<-paste(plink_call2,"--help > Exercises_R/PCA/plink2-help2.txt", sep=" ")
+call0
+
+system(call0)
+
+```
+
+### Datenvorbereitung - SNPs filtern
+Überprüfen Sie in R, ob alle SNPs von *mySNPs.txt* in 1KG sind. Hierfür sollte man am besten das *1KG_PCA.bim* File verwenden (tab-delimited). Recherchieren Sie, was in den einzelnen Spalten des .bim Files steht. Nutzen sie zum Einlesen der Befehl *fread()* aus dem Paket „*data.table*“. Filtern Sie nach den SNPs in der Schnittmenge und erstellen Sie ein gefiltertes Text-File mySNPs_filtered.txt!
+
+**Hinweis**: Es sollten am Ende 206,233 SNPs sein!
+
+|Spalte|Information|
+|------|-----------|
+|V1| |
+|V2| |
+|V3| |
+|V4| |
+|V5| |
+|V6| |
+
+```{r B4A3_2, eval=T,echo=T}
+myTab<-read.table("data/mySnps.txt")
+dim(myTab)
+rslist<-fread("data/1KG_PCA.bim",sep="\t",stringsAsFactors=F)
+dim(rslist)
+head(rslist)
+
+# to continue ...
+
+```
+
+### Datenvorbereitung - Samples filtern
+Erstellen Sie eine Sample Liste mit Individuen aus Asien, Afrika und Europa! Nutzen Sie hierfür das **1KG_PCA.fam** File (space-delimited). Wir wollen eine möglichst große Menge an Samples, aber jeder Herkunft sollte gleich oft vorhanden sein! Ziehen Sie zufällig aus der jeweiligen Teilmenge und speichern Sie ihre Liste als **mySamples.txt** ab!
+
+**Hinweis**: Es sollten am Ende 3*246 Individuen sein!
+
+|Spalte|Information|
+|------|-----------|
+|V1| |
+|V2| |
+|V3| |
+|V4| |
+|V5| |
+|V6| |
+
+```{r B4A3_3, eval=T,echo=T}
+fam.data<-read.table("data/1KG_PCA.fam",stringsAsFactors=F,sep=" ")
+dim(fam.data)
+head(fam.data)
+ethno<-substr(fam.data$V2,1,3)
+table(ethno)
+
+# to continue ...
+
+```
+
+### Datenvorbereitung - SNPs prunen
+Jetzt prunen Sie die SNPs mit PLINK, d.h. Sie prüfen, welche SNPs in hohem LD miteinander sind. Folgende Parameter sollten Sie setzen:
+a.	Input:--bfile 1KG_PCA
+b.	SNPs einschränken: --extract mySNPs_filtered.txt
+c.	Samples einschränken: --keep mySamples.txt
+d.	LD-Pruning-Parameter festlegen: --indep-pairphase 50 5 0.2 
+e.	Output: --out pruned_filter
+
+Was bedeuten die drei Zahlen hinter dem --indep-pairphase Befehl?
+```{r B4A3_4, eval=F,echo=T}
+call1<-paste(plink_call," --bfile data/1KG_PCA",
+             "--extract PCA/mySnps_filtered.txt",
+             "--keep PCA/mySamples.txt",
+             "--indep-pairphase 50 5 0.2",
+             "--out PCA/pruning_filter")
+system(call1)
+```
+**Hinweis**: Es sollten am Ende 121,878 SNPs sein. 
+
+### Datenvorbereitung - Datensatz erstellen
+Erstellen Sie jetzt mit PLINK ein neues .bed-File, dass nur noch die geprunten SNPs und die gewünschten Samples (aus 2) enthält (--bfile, --extract, --keep, und --make-bed). 
+
+```{r B4A3_5, eval=F,echo=T}
+call2<-paste(plink_call,"--bfile data/1KG_PCA",
+             "--extract PCA/pruning_filter.prune.in",
+             "--keep PCA/mySamples.txt",
+             "--make-bed --out PCA/pruned_data", sep=" ")
+system(call2)
+```
+
+### PCA berechnen
+Jetzt kann mit den neuen Files die PCA ausgerechnet werden (--bfile, --pca, --out)
+```{r B4A3_6, eval=F,echo=T}
+call3<-paste(plink_call,"--bfile PCA/pruned_data",
+             "--pca --out PCA/pca_out", sep=" ")
+system(call3)
+```
+
+### PCA auswerten
+Laden Sie beide Outputs der PCA in R ein! Wie sind die Daten aufgebaut?
+
+Erstellen Sie einen Plot der ersten beiden Vektoren mit Ethnien-Färbung! Was kann man daraus schließen?
+
+Berechnen Sie den Anteil der erklärten Varianz
+  a.	durch den ersten Eigenvektor und
+  b.	durch die ersten beiden Eigenvektoren!
+
+Was würden Sie erwarten, wenn alle 4 Ethnien in die Analyse eingeflossen wären? Wo würden Sie die Amerikaner einordnen? Rechnen Sie das nach!
+
+```{r B4A3_7, eval=F,echo=T}
+pca2values<-read.table("PCA/pca_out.eigenval")$V1
+pca2vector<-read.table("PCA/pca_out.eigenvec",stringsAsFactors=F,sep=" ")
+
+# to continue ...
+
+```
