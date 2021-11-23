@@ -20,6 +20,25 @@ library(Hmisc)
 library(nlme)
 ```
 
+## Fragen
+
+Gibt es Fragen zu
+
+* Vorlesung?
+* Übung?
+* Seminar?
+
+## Plan heute
+
+Besprechung von 
+
+* Blatt 3 - A1 (lineare Regression)
+* RBlatt 3 (Regressionsmodelle)
+
+Anschließend
+
+* kurze Vorstellung der Seminarpaper
+
 ## Aufgabe 1: Lineare Regression - Hintergrund (1)
 
 * Regresswerte = Vorhergesagte Werte: $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 x_i$ 
