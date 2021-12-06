@@ -4,7 +4,7 @@
 .Ruserdata
 Solutions/
 Slides/PCA
-.log
+*.log
 Exercises_R/data/
 Exercises_R/data2/
 Exercises_R/PCA/
