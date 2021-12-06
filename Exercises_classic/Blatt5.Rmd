@@ -6,11 +6,11 @@ date: "WS 2021/22"
 output: pdf_document
 ---
 
-Sie können Ihre Lösungen zu Aufgabe 3 als PDF in Moodle hochladen (Frist: 03.01.2022). 
+Sie können Ihre Lösungen zu Aufgabe 2 als PDF in Moodle hochladen (Frist: 10.01.2022). 
 
 ```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
 r_on_server = FALSE
-if(r_on_server==T) basicpath = "/net/ifs2/san_projekte/projekte/genstat/"  else basicpath =  "C:/Users/janne/Documents/R/Test/Teaching_WS2122/"
+if(r_on_server==T) basicpath = "/net/ifs2/san_projekte/projekte/genstat/"  else basicpath =  "C:/Users/janne/Documents/R/myRepositories/Teaching_StatAspekte/"
 if(r_on_server==T) .libPaths("/net/ifs2/san_projekte/projekte/genstat/07_programme/rpackages/amanMRO/") 
 
 #.libPaths()
@@ -40,27 +40,40 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Aufgabe 1: Imputation
 
-Beschreiben Sie die drei wichtigsten Schritte einer Imputation.
+a) Definieren Sie die Begriffe **Haplotyp** (im Vergleich zu **Genotyp**) und **Haploblock**!
+
+b) Nennen und beschreiben Sie die drei wichtigsten Schritte einer Imputation. Gehen Sie dabei auf die Referenz ein: wie wird diese wann genutzt?
+
+c) Sollten die Genetik-Daten vor der Imputation auf hohe Qualität gefiltert werden? Begründen Sie Ihre Antwort!
+
+d) Welche Imputationsqualitätsmaße kennen Sie? Beschreiben Sie kurz einen davon!
 
 ## Aufgabe 2: Gemischte Modelle
 
 Ein paar Fragen zu Mixed Models: 
 
 a) Generell, was „mischt“ man bei den gemischten Modellen?
-b) Sie haben Labordaten von 990 Probanden, die in 33 Batches analysiert wurden (30 Probanden auf einer Batch). Jede Batch hatte eine unterschiedliche Lagerdauer auf Eis, Boxnummer, Aliquotierung, PEG-Fällung oder Assay-Datum. Wie könnten Sie mit Hilfe eines Mixed Models so adjustieren, dass kein Batch-Effekt mehr auftritt?
+
+b) Sie haben Labordaten von 990 Probanden, die in 33 Batches analysiert wurden (30 Probanden auf einer Batch, s. Abbildung \ref{fig5_1}). Jede Batch hatte eine unterschiedliche Lagerdauer auf Eis, Boxnummer, Aliquotierung, PEG-Fällung oder Assay-Datum. Wie könnten Sie mit Hilfe eines Mixed Models so adjustieren, dass kein Batch-Effekt mehr auftritt?
+
 c) Sie haben Fitness-Daten von sechs Probanden, die drei verschiedenen Ergometer je dreimal genutzt haben. Sie interessieren sich für den Effekt der Ergometer, wobei es Variationen zwischen den Probanden und innerhalb der Probanden gibt. Stellen Sie ein geeignetes Modell auf! (Hinweis: Sie wollen $y_{ijk}$ bestimmen, für den $i$-ten Proband, an dem $j$-ten Ergometer und der $k$-ten Wiederholung!) 
+
 d) Was ist die graphische Bedeutung eines gemischten Modells?
 
-![Beispieldaten zu Aufgabe 2: Die Streuung in den Batches ist ähnlich, aber die Mittelwerte unterscheiden sich deutlich.](figures/Blatt5_VorBatchKorrektur.jpg)
+e) Wie werden gemischte Modelle in genomweiten Analysen angewandt? Nennen und erläutern Sie zwei Beispiele, indem Sie die Modellgleichungen angeben. 
 
-## Aufgabe 3: Haplotypen & Haploblöcke
+![Beispieldaten zu Aufgabe 2: Die Streuung in den Batches ist ähnlich, aber die Mittelwerte unterscheiden sich deutlich. \label{fig5_1}](figures/Blatt5_VorBatchKorrektur.jpg)
 
-Auf dem Übungsblatt 1 und 3 haben wir zwei SNPs kennengelernt, die das AB0-Blutgruppensystem beeinflussen (Blatt 1 Aufg. 3, Blatt 3 Aufg 4). 
+## Aufgabe 3: (Genomweite) Assoziationsstudien
 
-a) Definieren Sie die Begriffe **Haplotyp** und **Haploblock** anhand der SNPs!
-b) Es gibt noch viele weitere SNPs im *AB0* Gen. Warum reichen die Genotypen dieser zwei SNPs dennoch fast immer aus, um die Blutgruppen zu bestimmen?
-c) Kann ein Kind Blutgruppe B haben, wenn die Mutter Blutgruppe A und der Vater Blutgruppe O hat?
-d) Nehmen Sie an, Sie haben mittels SNP-Array (Coverage 80%) die Genotypen der zwei SNPs von 5000 Europäern bestimmt. Was bedeutet eine Coverage von 80% und wovon hängt dies ab? Können Sie damit die Blutgruppen aller Individuen bestimmen?
+a) Vergleichen Sie **Linkage-** und **Assoziationsstudien**!
+
+b) Neben genomweiten Assoziationsstudien (GWAS), welche Typen von Assoziationsstudien sind Ihnen bekannt? 
+
+c) Geben Sie stichpunktartig den Ablauf einer GWAS an!
+
+d) Welche Vor- und Nachteile gibt es bei einer GWAS?
+
 
 ## Aufgabe 4: Studiendesigns
 
