@@ -3,7 +3,8 @@
 .RData
 .Ruserdata
 Solutions/
-Slides/
+Slides/PCA
+.log
 Exercises_R/data/
 Exercises_R/data2/
 Exercises_R/PCA/
