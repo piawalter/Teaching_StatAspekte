@@ -1,0 +1,471 @@
+---
+title: "Genetische Statistik"
+subtitle: "WS 2021/2022 \nR - Übung 2 - Deskription"
+author: Dr. Janne Pott (janne.pott@uni-leipzig.de)
+date: November 16, 2021
+output: 
+  beamer_presentation:
+    theme: "Madrid"
+    colortheme: "lily"
+    fonttheme: "structurebold"
+    slide_level: 2
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(knitr)
+library(data.table)
+library(lubridate)
+library(vioplot)
+```
+
+## Aufgabe 1: Deskriptive Statistik
+
+Datensatz *ergometer.RData*
+
+* Berechnung *BMI*, Deskription *ergometer*, *lactate*, *BMI* und *Alter* für Männer und Frauen getrennt. 
+* Erstellung QQ-Plots und Histrogramme; Test auf Normalverteilung. 
+* Vergleich *ergometer* zwischen den Geschlechtern
+* Korrelation *ergometer* mit *lactate*, *BMI* und *Alter*.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+load("data/ergometer.RData")
+setDT(myDat)
+date1<-mdy(myDat$Bday)
+date2<-mdy(myDat$Tday)
+
+myDat[,alter:=as.numeric(round(difftime(date2, date1, unit="weeks")/52.25,2))]
+```
+
+## Aufgabe 1: Lösung a) - BMI
+
+```{r}
+# BMI
+class(myDat[,weight])
+class(myDat[,height])
+myDat[,BMI:=round(weight/height^2,2)]
+```
+
+## Aufgabe 1: Lösung a) - Deskription
+
+```{r, eval=T,echo=T}
+myCols <- c("ergometer","lactate","alter","BMI") 
+tab1<-myDat[sex==1, sapply(.SD, summary),.SDcols=myCols]
+tab2<-myDat[sex==1, sapply(.SD, sd),.SDcols=myCols]
+tab3<-myDat[sex==1, sapply(.SD, var),.SDcols=myCols]
+tab_male<-rbind(tab1,tab2,tab3)
+rownames(tab_male)[c(7,8)]<-c("SD","Var")
+
+tab1<-myDat[sex==2, sapply(.SD, summary),.SDcols=myCols]
+tab2<-myDat[sex==2, sapply(.SD, sd),.SDcols=myCols]
+tab3<-myDat[sex==2, sapply(.SD, var),.SDcols=myCols]
+tab_female<-rbind(tab1,tab2,tab3)
+rownames(tab_female)[c(7,8)]<-c("SD","Var")
+```
+
+## Aufgabe 1: Lösung a) - Deskription Männer
+
+```{r, echo=FALSE}
+knitr::kable(tab_male, position = "!b",digits =2,
+             caption = "Deskriptive Statistiken - Männer",
+             col.names = c("Ergometer","Laktat","Alter","BMI"))
+```
+
+## Aufgabe 1: Lösung a) - Deskription Frauen
+
+```{r, echo=FALSE}
+knitr::kable(tab_female, position = "!b",digits =2,
+             caption = "Deskriptive Statistiken - Frauen",
+             col.names = c("Ergometer","Laktat","Alter","BMI"))
+```
+
+## Aufgabe 1: Lösung b) - Plots Ergometer
+
+```{r, eval=T,echo=F}
+par(mfrow = c(1,2))
+qqnorm(myDat$ergometer,main = "Ergometer"); qqline(myDat$ergometer, col = 2)
+hist(myDat$ergometer,breaks = 10,main = "Ergometer")
+```
+
+## Aufgabe 1: Lösung b) - Plots Laktat
+
+```{r, eval=T,echo=F}
+par(mfrow = c(1,2))
+qqnorm(myDat$lactate,main = "Laktat"); qqline(myDat$lactate, col = 2)
+hist(myDat$lactate,breaks = 10,main = "Laktat")
+
+```
+
+## Aufgabe 1: Lösung b) - Plots Alter
+
+```{r, eval=T,echo=F}
+par(mfrow = c(1,2))
+qqnorm(myDat$alter,main = "Alter"); qqline(myDat$alter, col = 2)
+hist(myDat$alter,breaks = 10,main = "Alter")
+```
+
+## Aufgabe 1: Lösung b) - Plots BMI
+
+```{r, eval=T,echo=F}
+par(mfrow = c(1,2))
+qqnorm(myDat$BMI,main = "BMI"); qqline(myDat$BMI, col = 2)
+hist(myDat$BMI,breaks = 10,main = "BMI")
+
+```
+
+## Aufgabe 1: Lösung b) - Test Normalverteilung
+
+```{r, warning=F}
+p1 = ks.test(myDat$ergometer,
+             pnorm,
+             mean=mean(myDat$ergometer),
+             sd=sd(myDat$ergometer))
+p2 = ks.test(myDat$lactate,pnorm,mean=mean(myDat$lactate),sd=sd(myDat$lactate))
+p3 = ks.test(myDat$alter,pnorm,mean=mean(myDat$alter),sd=sd(myDat$alter))
+p4 = ks.test(myDat$BMI,pnorm,mean=mean(myDat$BMI),sd=sd(myDat$BMI))
+
+tab4 = data.table(parameter =  c("Ergometer","Laktat",
+                                 "Alter","BMI"),
+                  KS_Test = c(p1$p.value,p2$p.value,
+                              p3$p.value,p4$p.value))
+```
+
+## Aufgabe 1: Lösung b) - Test Normalverteilung
+
+```{r}
+knitr::kable(t(tab4[,2]), position = "!b",digits =4,
+             caption = "Kolmogorov-Smirnov Test auf Normalverteilung",
+             col.names = c("Ergometer","Laktat","Alter","BMI"))
+```
+
+
+## Aufgabe 1: Lösung c) - Vergleich Ergometer
+
+```{r, eval=T, echo=F}
+hist(myDat[,ergometer], probability = TRUE, col = "grey", 
+     axes = FALSE,main = "", xlab = "",  ylab = "")
+axis(1)
+lines(density(myDat[,ergometer]), lwd = 2, col = "red")
+par(new = TRUE)
+vioplot(myDat[sex==1,ergometer], horizontal = TRUE, yaxt = "n",  
+        side = "left",
+        axes = FALSE, col = rgb(0, 1, 1, alpha = 0.15))
+par(new = TRUE)
+vioplot(myDat[sex==2,ergometer], horizontal = TRUE, yaxt = "n", 
+        side = "right",
+        axes = FALSE, col = rgb(1, 1, 0, alpha = 0.15))
+```
+
+## Aufgabe 1: Lösung c) - Vergleich Ergometer
+
+Welche Annahmen müssen bei einem Vergleich zweier Stichproben gelten?
+
+## Aufgabe 1: Lösung c) - Vergleich Ergometer
+
+Welche Annahmen müssen bei einem Vergleich zweier Stichproben gelten?
+
+1. Die zwei Gruppen sind unabhängig voneinander
+    
+2. Die zwei Gruppen haben gleiche Varianz oder Streuung 
+    
+3. Die zwei Gruppen sind normal-verteilt
+
+## Aufgabe 1: Lösung c) - Vergleich Ergometer
+
+Welche Annahmen müssen bei einem Vergleich zweier Stichproben gelten?
+
+1. Die zwei Gruppen sind unabhängig voneinander
+    * Check, Männer & Frauen sind unabhängig
+2. Die zwei Gruppen haben gleiche Varianz oder Streuung 
+    * Check, visuell via Violinplot; 1a) Varianz sehr ähnlich
+3. Die zwei Gruppen sind normal-verteilt    
+    
+## Aufgabe 1: Lösung c) - Vergleich Ergometer
+
+Welche Annahmen müssen bei einem Vergleich zweier Stichproben gelten?
+
+1. Die zwei Gruppen sind unabhängig voneinander
+    * Check, Männer & Frauen sind unabhängig
+2. Die zwei Gruppen haben gleiche Varianz oder Streuung 
+    * Check, visuell via Violinplot; 1a) Varianz sehr ähnlich
+3. Die zwei Gruppen sind normal-verteilt
+    * Check, One-sample Kolmogorov-Smirnov test p-Wert = 0.06 --> Normalverteilung kann nicht abgelehnt werden
+
+--> Student's t-Test
+
+## Aufgabe 1: Lösung c) - Vergleich Ergometer
+
+1. Die zwei Gruppen sind unabhängig voneinander
+    * Check, Männer & Frauen sind unabhängig
+2. Die zwei Gruppen haben gleiche Varianz oder Streuung 
+    * Check, visuell via Violinplot; 1a) Varianz sehr ähnlich
+3. Die zwei Gruppen sind normal-verteilt
+    * One-sample Kolmogorov-Smirnov test p-Wert ist grenzwertig 
+
+--> Wilcoxon Rank Sum Test
+
+## Aufgabe 1: Lösung c) - Vergleich Ergometer
+
+--> Bekannte Verteilung 
+
+--> Bekannte Mathematische Formeln
+
+--> Bekannte Parameter, die die Form der Verteilung bestimmen 
+
+--> Student's t-Test: parameter-abhängiger Test
+    
+    Nullhypothese: Die Mittelwerte der zwei Gruppen sind gleich.
+
+--> Wilcoxon Rank Sum Test: parameter-freier Test
+    
+    Nullhypothese: Die Mediane der zwei Gruppen sind gleich.
+
+## Aufgabe 1: Lösung c) - Student's t-Test
+
+```{r, eval=T,echo=T,tidy=T}
+t.test(myDat$ergometer ~ myDat$sex) 
+```
+
+## Aufgabe 1: Lösung c) - Wilcoxon Rank Sum Test
+
+```{r, eval=T,echo=T,tidy=T}
+wilcox.test(myDat$ergometer ~ myDat$sex)
+```
+
+## Aufgabe 1: Lösung d) - Korrelation
+
+Alter & Laktat sind nicht normalverteilt --> Spearmans rank correlation
+
+```{r, eval=T,echo=T}
+
+# Korrelation
+# All credits to https://www.r-bloggers.com/more-on-exploring-correlations-in-r/
+cor.prob <- function (X, dfr = nrow(X) - 2) {
+  R <- cor(X, use="pairwise.complete.obs",method="spearman")
+  above <- row(R) < col(R)
+  r2 <- R[above]^2
+  Fstat <- r2 * dfr/(1 - r2)
+  R[above] <- 1 - pf(Fstat, 1, dfr)
+  R[row(R) == col(R)] <- NA
+  R
+}
+```
+
+## Aufgabe 1: Lösung d) - Korrelation
+
+```{r}
+corTab<-cor.prob(myDat[,7:10])
+knitr::kable(corTab, position = "!b",digits =5,
+             caption = "Correlation - spearmans rho \ p-value",
+             col.names = c("Ergometer","Laktat","Alter","BMI"))
+
+```
+
+## Aufgabe 1: Lösung d) - Korrelation
+
+```{r}
+myDat[,watt:=ergometer*weight]
+corTab2<-cor.prob(myDat[,7:11])
+knitr::kable(corTab2, position = "!b",digits =5,
+             caption = "Correlation - spearmans rho \ p-value",
+             col.names = c("Ergometer","Laktat","Alter","BMI","Watt"))
+
+```
+
+## Aufgabe 1: Lösung c) - Student's t-Test - Wdh
+
+```{r, eval=T,echo=T,tidy=T}
+t.test(myDat$watt ~ myDat$sex) 
+```
+
+## Aufgabe 1: Lösung c) - Wilcoxon Rank Sum Test- Wdh
+
+```{r, eval=T,echo=T,tidy=T}
+wilcox.test(myDat$watt ~ myDat$sex)
+```
+
+## Aufgabe 1: Lösung d) - Korrelation
+
+```{r, eval=T,echo=F}
+par(mfrow=c(1,2))
+boxplot(myDat$ergometer ~ myDat$sex, main="Boxplot: Ergometer",
+        xlab="Geschlecht",ylab="Watt/kg")
+plot(myDat[,BMI],myDat[,ergometer],xlab="BMI",ylab="Watt/kg",main="Scatterplot",pch=19)
+
+```
+
+## Aufgabe 1: Lösung d) - Korrelation
+```{r,echo=F}
+par(mfrow=c(1,2))
+boxplot(myDat$watt ~ myDat$sex, main="Boxplot: Watt",
+        xlab="Geschlecht",ylab="Watt")
+plot(myDat[,BMI],myDat[,watt],xlab="BMI",ylab="Watt",main="Scatterplot",pch=19)
+```
+
+## Aufgabe 2: Gepaarte Tests
+
+* Deskription
+* Test Handlängenunterschied zwischen Männern & Frauen
+* Test Längenunterschiede zwischen Schreib- und Nichtschreibhanden für Männer und Frauen getrennt
+* Beziehung zwischen Schreibhand, Armverschränkung und Klatschen
+* Beziehungen zwischen Größe, Länge der Hand und Unterschied zwischen Schreib-/Nichtschreibhand für Männer und Frauen getrennt
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+load("data/haendigkeit.RData")
+setDT(myDat)
+filt<-!is.na(myDat$sex) & !is.na(myDat$WrHnd) & !is.na(myDat$NWHnd) & 
+  !is.na(myDat$WHnd) & !is.na(myDat$Clap) 
+myDat<-myDat[filt,]
+
+myDat[,dif:=WrHnd-NWHnd]
+filt<-myDat$dif>mean(myDat$dif,na.rm = T) + 4*sd(myDat$dif,na.rm = T) 
+myDat2<-myDat[!filt,]
+attach(myDat2)
+
+cor.prob <- function (X, dfr = nrow(X) - 2) {
+  R <- cor(X, use="pairwise.complete.obs",method="pearson")
+  above <- row(R) < col(R)
+  r2 <- R[above]^2
+  Fstat <- r2 * dfr/(1 - r2)
+  R[above] <- 1 - pf(Fstat, 1, dfr)
+  R[row(R) == col(R)] <- NA
+  R
+}
+
+```
+
+## Aufgabe 2: Lösung a) - Deskription binär
+
+```{r, eval=T,echo=F}
+# binäre oder kategoriale Parameter
+x1=myDat2[,table(sex,WHnd)]
+x2=myDat2[,table(Fold,Clap)]
+rownames(x1) = c("Männer","Frauen")
+rownames(x2) = c("rechts","egal","links")
+
+knitr::kable(x1, position = "!b",digits =3,
+             caption = "Händigkeit",
+             col.names = c("rechts","links"))
+knitr::kable(x2, position = "!b",digits =3,
+             caption = "Klatschen & Armverschränken",
+             col.names = c("rechts","egal","links"))
+
+```
+
+## Aufgabe 2: Lösung a) - Deskription kontinuierlich
+
+```{r,echo=F}
+tab1<-myDat2[, sapply(.SD, function(x){
+  x0<-na.omit(x)
+  x1<-summary(x0)
+  return(x1)
+}),.SDcols=c("WrHnd","NWHnd","height")]
+tab2<-myDat2[, sapply(.SD, sd,na.rm = T),.SDcols=c("WrHnd","NWHnd","height")]
+tab3<-myDat2[, sapply(.SD, var,na.rm = T),.SDcols=c("WrHnd","NWHnd","height")]
+tab<-rbind(tab1,tab2,tab3)
+rownames(tab)[c(7,8)]<-c("SD","Var")
+knitr::kable(tab, position = "!b",digits =3,
+             caption = "Deskriptive Statistiken",
+             col.names = c("Länge Schreibhand",
+                           "Länge der Nichtschreibhand",
+                           "Größe"))
+```
+
+## Aufgabe 2: Lösung b) - Handlängenunterschiede Männer vs Frauen
+
+```{r, echo=F}
+par(mfrow=c(2,2))
+hist(WrHnd,breaks = 10,xlim = c(12,24),main="Histogram der Schreibhand",
+     xlab="Schreibhandlänge")
+boxplot(WrHnd ~ sex, main="Boxplot - Schreibhand")
+hist(NWHnd,breaks = 10,xlim = c(12,24),main="Histogram der anderen Hand",
+     xlab="Nicht-Schreibhandlänge")
+boxplot(NWHnd ~ sex, main="Boxplot - andere Hand")
+
+```
+
+## Aufgabe 2: Lösung b) - Handlängenunterschiede Männer vs Frauen
+
+```{r}
+p1 = t.test(WrHnd ~ sex) 
+p2 = t.test(NWHnd ~ sex) 
+tab5 = data.table(parameter =  c("WrHnd","NWHnd"),
+                  t_Test = c(p1$p.value,p2$p.value))
+tab5$t_Test<- format(tab5$t_Test, digits = 3)
+knitr::kable(t(tab5[,2]), position = "!b",#digits =8,
+             caption = "Student's t-Test",
+             col.names = c("WrHnd","NWHnd"))
+```
+
+## Aufgabe 2: Lösung c) - Handlängenunterschiede Schreib -vs Nichtschreibhand
+
+```{r, echo=F}
+female<-sex==2
+par(mfrow=c(2,2))
+hist(dif[female],breaks = 10,main="Histogram der Differenz (Frauen)",
+     xlab="Schreibhandlänge")
+boxplot(WrHnd[female], NWHnd[female], main="Boxplot - Frauen")
+hist(dif[!female],breaks = 10,main="Histogram der  Differenz (Männer)",
+     xlab="Nicht-Schreibhandlänge")
+boxplot(WrHnd[!female],NWHnd[!female], main="Boxplot - Männer")
+```
+
+## Aufgabe 2: Lösung c) - Handlängenunterschiede Schreib -vs Nichtschreibhand
+
+```{r}
+female<-sex==2
+p1 = t.test(WrHnd[female],NWHnd[female],paired = T)
+p2 = t.test(WrHnd[!female],NWHnd[!female],paired = T)
+
+tab6 = data.table(parameter =  c("WrHnd","NWHnd"),
+                  t_Test = c(p1$p.value,p2$p.value))
+tab6$t_Test<- format(tab6$t_Test, digits = 3)
+knitr::kable(t(tab6[,2]), position = "!b",#digits =8,
+             caption = "Student's t-Test der Differenz",
+             col.names = c("Frauen","Männer"))
+```
+
+## Aufgabe 2: Lösung d) - Beziehung binäre Variablen
+
+```{r, echo=F}
+filt1<-Fold!=0.5 & Clap!=0.5
+p1 = fisher.test(Fold[filt1],Clap[filt1]) 
+
+filt2<-Fold!=0.5 
+p2 = fisher.test(Fold[filt2],WHnd[filt2]) 
+
+filt3<-Clap!=0.5 
+p3 = fisher.test(Clap[filt3],WHnd[filt3])
+
+tab7 = data.table(parameter =  c("Fold vs Clap",
+                                 "Fold vs Whnd",
+                                 "Clap vs Whnd"),
+                  Fisher_Test = c(p1$p.value,
+                             p2$p.value,
+                             p3$p.value))
+tab7$Fisher_Test<- format(tab7$Fisher_Test, 
+                          digits = 3)
+knitr::kable(t(tab7[,2]), position = "!b",#digits =8,
+             caption = "Fisher's Exact Test",
+             col.names = tab7$parameter)
+```
+
+## Aufgabe 2: Lösung e) - Korrelation Frauen
+
+```{r, echo=F}
+filt = !is.na(myDat2$sex) & !is.na(myDat2$height) & !is.na(myDat2$WrHnd) & !is.na(myDat2$NWHnd) & !is.na(myDat2$WHnd) & !is.na(myDat2$Clap) & !is.na(myDat2$Fold)
+corTab<-cor.prob(myDat2[female & filt,c(8,3,4,9)])
+knitr::kable(corTab, position = "!b",digits =5,
+             caption = "Correlation - spearmans rho \ p-value",
+             col.names = c("height","WrHnd","NWHnd","dif"))
+
+```
+
+## Aufgabe 2: Lösung e) - Korrelation Männer
+
+```{r}
+corTab<-cor.prob(myDat2[!female & filt,c(8,3,4,9)])
+knitr::kable(corTab, position = "!b",digits =5,
+             caption = "Correlation - spearmans rho \ p-value",
+             col.names = c("height","WrHnd","NWHnd","dif"))
+
+```
