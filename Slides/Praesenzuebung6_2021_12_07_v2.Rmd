@@ -36,10 +36,6 @@ Besprechung von RBlatt 4
 * XY-Plots
 * PCA 
 
-Anschließend / Falls noch Zeit
-
-* Blatt 4 - A2 (Heritabilität)
-* Blatt 4 - A1 (Populationsgenetik)
 
 # Verwandtschaft
 
@@ -600,178 +596,12 @@ legend("bottomleft",legend=c(v.ethno,"AMR"),col=c("black","red","blue","green"),
 * Welche Grundannahme ist durch gemischte Populationen verletzt?
 * Wie kann das gelöst werden?
 
-# Heritabilität
-
-## Heritabilität - Definition
-
-**Heritabilität**: Anteil der Varianz eines Merkmals, der durch die Genetik erklärt wird. Beantwortet in wie fern Gene den Unterschied (Varianz) einer Eigenschaft erklären, **NICHT** welche Gene die Eigenschaft beeinflussen. 
-
-$$ h^2 = \frac{Var(Genetik)}{Var(Merkmal)} = \frac{Var(Gen.)}{Var(Gen.) + Var(Umw.) + 2 \cdot Cov(Gen., Umw.)}$$
-
-Einfachste Methode zur Bestimmung von $h^2$: Zwillingsstudie & Falconers Formel $h^2=2 \cdot (r(MZ) - r(DZ))$ (Vergleich der Merkmalskonkordanz zwischen monozygoten (MZ) und dizygoten (DZ) Zwilligen). 
-
-Alternative: GCTA, LDHub
-
-## Heritabilität - Missing heritability
-
-![Missing heritability](../Exercises_classic/figures/Blatt4_Heritability.jpg){width=70%}
-
-## Heritabilität - Aussage 1
-
-a) Falls eine Person die Veranlagung einer Krankheit hat, die eine Heritabilität von 1 besitzt, wird diese Person auch die Krankheit erleiden. 
-
-## Heritabilität - Aussage 1
-
-a) Falls eine Person die Veranlagung einer Krankheit hat, die eine Heritabilität von 1 besitzt, wird diese Person auch die Krankheit erleiden. 
-
-**Fast immer falsch**. Bsp. Phenylketonurie (PKU, angeborene Stoffwechselstörung, autosomal-rezessiv, >400 Mutationen im Gen Phenylalaninhydroxylase bekannt, Mutationen beeinflussen das Ausmaß der Aktivitätseinschränkung) – hat Heritabilität 1, aber bei geeigneter Diät bricht die Krankheit nicht aus. 
-
-## Heritabilität - Aussage 2
-
-b) Die Heritabilität Finger an jeder Hand zu haben ist 1 (oder fast 1). 
-
-## Heritabilität - Aussage 2
-
-b) Die Heritabilität Finger an jeder Hand zu haben ist 1 (oder fast 1). 
-
-**Falsch**, sie liegt nahe bei 0. Ursache ist hier fast immer Fehlbildungen aufgrund Medikamente / andere Substanzen in der Embryonalphase („Teratogens“) oder Unfälle im Erwachsenenalter 
-
-## Heritabilität - Aussage 3
-
-c) Die Begriffe „Heritabilität“ und „ererbt“ bedeuten fast das Gegenteil. 
-
-## Heritabilität - Aussage 3
-
-c) Die Begriffe „Heritabilität“ und „ererbt“ bedeuten fast das Gegenteil. 
-
-**Richtig**. Je mehr ein Merkmal ererbt wird, desto niedriger ist dessen Heritabilität. 
-
-## Heritabilität - Aussage 4
-
-d) In Amerika der 1950er Jahre war die Heritabilität für das Tragen von Ohrringen sehr hoch. 
-
-## Heritabilität - Aussage 4
-
-d) In Amerika der 1950er Jahre war die Heritabilität für das Tragen von Ohrringen sehr hoch. 
-
-**Richtig**. Fast nur Frauen haben in dieser Zeit Ohrringe getragen --> stellt quasi die Heritabilität vom Geschlecht dar. 
-
-## Heritabilität - Aussage 5
-
-e) Die Heritabilität von eineiigen Zwillingen ist 1. 
-
-## Heritabilität - Aussage 5
-
-e) Die Heritabilität von eineiigen Zwillingen ist 1. 
-
-**Falsch**, sie haben eine Heritabilität von 0. Jede Variation kommt durch die Umwelt zustande. 
-
-## Heritabilität - Aussage 6
-
-f) Je mehr sich die Umwelt für verschieden Populationen mit unterschiedlicher Heritabilität angleicht, desto höher wird die (Gesamt-)Heritabilität. 
-
-## Heritabilität - Aussage 6
-
-f) Je mehr sich die Umwelt für verschieden Populationen mit unterschiedlicher Heritabilität angleicht, desto höher wird die (Gesamt-)Heritabilität. 
-
-**Richtig**. Je ähnlicher die Umwelt wird, desto niedriger wird deren Varianz und der Anteil der Genetik steigt. 
-
-## Aufgabe A1: Heritabilität - Zusammenfassung
-
-* Wie kann Heritabilität geschätzt werden
-* Wodurch entsteht die "missing heritability"?
-
-# Populationsgenetik
-
-## Populationsgenetik - Hintergrund
-
-![Missing heritability](../Exercises_classic/figures/Blatt4_De_Finetti_diagram.jpeg){width=70%}
-
-
-## Populationsgenetik - Aufgabe
-
-a) Bestimmung von $p_i$ und $q_i$
-
-b) Berechnung von Inzuchtskoeffizient $F_i$
-
-c) Warum Varianz = Heterozygosität?
-
-d) Bestimmung von $H_I$, $H_S$ und $H_T$ 
-
-e) Berechnung des Fixationsindex $F_ST$
-
-f) Interpretation 
-
-Genotyp      | AA  | AB  | BB 
------------- | --- | --- | ---
-Population 1 | 125 | 250 | 125
-Population 2 |  50 |  30 |  20
-Population 3 | 100 | 500 | 400
-
-## Populationsgenetik - Lösung a)
-
-$$ p=\begin{pmatrix} (2\text{AA}_1 + \text{AB}_1)/2n_1 \\ (2\text{AA}_2 + \text{AB}_2)/2n_2 \\ (2\text{AA}_3 + \text{AB}_3)/2n_3 \end{pmatrix} = \begin{pmatrix} 500/1000 \\ 130/200 \\ 700/2000 \end{pmatrix} = \begin{pmatrix} 0.5 \\ 0.65 \\ 0.35 \end{pmatrix}, q=1-p=\begin{pmatrix} 0.5 \\ 0.35 \\ 0.65 \end{pmatrix}$$
-
-\begin{align}
-\bar{p} &= \frac{2 \cdot (AA_1+AA_2+AA_3) + (AB_1+AB_2+AB_3)}{2\cdot (n_!+n_2+n_3)} \notag \\
-&= \frac{2\cdot 275 + 780}{2\cdot 1600} = 0.416 \notag \\
-\bar{q} &= 0.584 \notag
-\end{align}
-
-## Populationsgenetik - Lösung b)
-
-Beobachtete Heterozygosität:
-
-$$ p_{obs}(AB)=\begin{pmatrix} \text{AB}_1/n_1 \\ \text{AB}_2/n_2 \\ \text{AB}_3/n_3 \end{pmatrix} = \begin{pmatrix} 250/500 \\ 30/100 \\ 500/1000 \end{pmatrix} = \begin{pmatrix} 0.5 \\ 0.3 \\ 0.5 \end{pmatrix} $$
-
-Erwartete Heterozygosität:
-
-$$ p_{exp}(AB)= 2 \cdot p \cdot q =\begin{pmatrix} 2 \cdot 0.5 \cdot 0.5 \\ 2 \cdot 0.65 \cdot 0.35 \\ 2 \cdot 0.35 \cdot 0.65 \end{pmatrix} = \begin{pmatrix} 0.5 \\ 0.455 \\ 0.455 \end{pmatrix} $$
-
-Inzuchtskoeffizient: 
-
-$$F= \frac{p_{exp}(AB) - p_{obs}(AB)}{p_{exp}(AB)} = \begin{pmatrix} (0.5 - 0.5)/0.5 \\ (0.455 - 0.3)/0.455 \\  (0.455 - 0.5)/0.455 \end{pmatrix} = \begin{pmatrix} 0 \\ 0.34 \\ -0.10 \end{pmatrix}$$
-
-## Populationsgenetik - Lösung c)
-
-* Binomialverteilung $B(k|n,p)$: 
-* Allel A zählt als Erfolg, Allel B als Misserfolg. 
-* n=2, weil pro Genotyp zweimal gezogen 
-* Erfolgswahrscheinlichkeit entspricht der Allelfrequenz ($p$). 
-* Bei zwei Treffern ($k=2$) erhält man den Genotyp AA ($P(AA)=B(2|2,p)$)
-* Die Varianz unter Bionomialverteilung ist immer $Var(X)=n \cdot p \cdot q =2pq=p_{exp}(AB)$ im HWE. 
-
-## Populationsgenetik - Lösung d) & e)
-
-\begin{align}
-H_I &= \frac{p_{ops}^T \cdot n}{N_{total}} = \frac{250 + 30 + 500}{1600}= 0.4875 \notag \\
-H_S &= \frac{p_{exp}^T \cdot n}{N_{total}} = \frac{0.5 \cdot 500 + 0.455 \cdot 100 + 0.455 \cdot 1000}{1600}=0.470 \notag \\
-H_T &= 2 \cdot \bar{p} \cdot \bar{q} = 0.486 \notag \\
-F_{ST} &= 1 - \frac{H_S}{H_T} = 0.034 \notag \\
-F_{IT} &= 1 - \frac{H_I}{H_T} = -0.0031 \notag 
-\end{align}
-
-## Populationsgenetik - Lösung f)
-
-Interpretation:
-
-* Population 1 ist im HWE
-* Population 2 hat weniger Heterozygote als erwartet --> Hinweis für *inbreeding* (Inzucht; Verletzung von HWE weil keine zufällige Partnerwahl, sondern eher Verwandte)
-* Population 3 hat mehr Heterozygote als erwartet --> Hinweis für *outbreeding* (Auszucht; Verletzung von HWE weil keine zufällige Partnerwahl, sondern alle Verwandten ausgeschlossen)
-* Subpopulationen sind für etwa 3.4% der gesamten genetischen Variation verantwortlich
-* Die Geamtpopulation zeigt keine Anzeichen für Inzucht
-
-## Aufgabe A1: Populationgenetik - Zusammenfassung
-
-* Wie kann Heritabilität geschätzt werden
-* Wodurch entsteht die "missing heritability"?
-
 
 # Zusammenfassung
 
 ## Zusammenfassung
 
-* Warum kann PCA und Verwandtschaft zu Adjustierung auf Stratifikationsbias genutzt werden?
-* Welche Ausreißer in einem XY-Plot müssen gefiltert werden?
-* Was ist Heritabiliät?
+* Welche Grundannahme ist durch Verwandtschaft verletzt? Wie kann das gelöst werden?
+* Welches Grundproblem wird bei einem XY-Plot betrachtet, und warum kann das nur unzureichend gelöst werden? Warum werden drei Parameter hier betrachten / warum reichen zwei nicht aus?
+* Welche Grundannahme ist durch gemischte Populationen verletzt? Wie kann das gelöst werden?
 
