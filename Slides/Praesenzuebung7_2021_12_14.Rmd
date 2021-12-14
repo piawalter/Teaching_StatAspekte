@@ -236,8 +236,8 @@ Nachteile von GWAS:
 Kombinationsmöglichkeiten:
 
 * Mehrstufendesign: 
-    * Stufe 1: Alle SNPs, kleine Stichprobengröße, liberaler p-Wert ($p<1 \cdot 10^{-6}$)
-    * Stufe 2: sig. SNPs aus Stufe 1, größere Stichprobengröße, stringentere p-Wert ($p<5 \cdot 10^{-8}$)
+    * Stufe 1: Alle SNPs, kleine Stichprobengröße, liberaler p-Wert (z.B. $p<0.05$ oder $p<0.01$)
+    * Stufe 2: sig. SNPs aus Stufe 1, größere Stichprobengröße, stringentere p-Wert (z.B. $p<0.001$)
     * Vorteil: Trennung der wenigen true-positives von den vielen false-positives der ersten Stufe
     * Nachteil: Auswahl der SNPs abhängig von Modell, LD, wenig Power in der ersten Stufe
 * Metaanalyse:
