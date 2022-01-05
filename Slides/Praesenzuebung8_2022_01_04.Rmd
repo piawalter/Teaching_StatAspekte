@@ -121,6 +121,13 @@ Erklären Sie die drei evolutionäre Hauptprozesse, die bestimmen, was mit der g
 
 # Fixationsindex
 
+## Aus der Vorlesung
+
+**Frage**: Wurden diese Genotypfrequenzen hergeleitet? Bzw. kann sie jemand erklären?
+
+![aus Vorlesung](../Exercises_classic/figures/Blatt4_VL_Screenshot.jpg){width=70%}
+
+
 ## Herleitung des Fixationsindex (1/7)
 
 Der Fixationsindex ($F_{ST}$) ist ein Maß für die Populationsdifferenzierung aufgrund der genetischen Struktur.
@@ -202,9 +209,41 @@ $F_{IT} = 1 - H_I / 2\bar{pq}$: Ratio der beobachteten gegen die im HWE erwartet
 
 $F_{ST} = 1 - H_S / 2\bar{p}\bar{q}$: Varianz innerhalb der Subpopulationen relativ zu der erwarteten Varianz. Zwischen 0 (alle Subpopulationen haben gleiche AF) und 1 (Subpopulationen fix für unterschiedliche Allele - nur AA oder aa)
 
+## Zusammenhang Vorlesung - Übung
+
+Übung: Freq(AA) = $\bar{p}^2 + \bar{p} \bar{q} F_{ST}$
+
+VL: Freq(AA) = $\bar{p}^2 (1-F_{ST})+\bar{p}F_{ST}$
+
+"zufällige Kraft F, die zu mehr Homozygoten führt" (zweimal ziehen mit Zurücklegen, Wahrscheinlichkeit zuerst A dann A oder a zu ziehen)
+
+![Entscheidungsbaum mit Störfaktor](../Exercises_classic/figures/Blatt4_Entscheidungsbaum.jpg){width=50%}
+
+## Zusammenhang Vorlesung - Übung
+
+\begin{align}
+Freq(AA) &= \bar{p} \cdot (F_{ST} + (1 - F_{ST})\cdot \bar{p}) \notag \\
+&= \bar{p}^2 (1-F_{ST}) + \bar{p}F_{ST} \notag \\
+&= \bar{p}^2 + \bar{p}\bar{q}F_{ST} \notag \\
+&= \bar{p}^2 + Var(p) \notag 
+\end{align}
+
+Vgl zu HWE: 
+
+\begin{align}
+1 &= \bar{p} + \bar{q} = (\bar{p} +\bar{q})^2 = \bar{p}^2 + 2\bar{p}\bar{q} + \bar{q}^2  \notag \\
+1 &= \bar{p}^2 (1-F_{ST}) + \bar{p}F_{ST} + 2\bar{p}\bar{q}F_{ST} + \bar{q}^2 (1-F_{ST}) + \bar{q}F_{ST} \notag \\
+&= (1-F_{ST}) [\bar{p}^2 + 2\bar{p}\bar{q} + \bar{q}^2] + F_{ST}[\bar{p} + \bar{q}] \notag \\
+&= (1-F_{ST})(\bar{p} +\bar{q})^2  + F_{ST}(\bar{p} +\bar{q}) \notag
+\end{align}
+
 ## Populationsgenetik - De Finetti Diagramm
 
-![De Finetti Diagram](../Exercises_classic/figures/Blatt4_De_Finetti_diagram.jpeg){width=70%}
+* Zwei Populationen im HWE
+* freq(Aa) auf der durchgezogenen Linie zwischen 1 und 2
+* Dieser Wert ist immer kleiner als y (HWE)!
+
+![De Finetti Diagram](../Exercises_classic/figures/Blatt4_De_Finetti_diagram.jpeg){width=40%}
 
 # Populationsgenetik
 
