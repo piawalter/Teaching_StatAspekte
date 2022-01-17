@@ -6,11 +6,11 @@ date: "WS 2021/22"
 output: pdf_document
 ---
 
-Sie können Ihre Lösungen zu Aufgabe 1 & 2 als PDF in Moodle hochladen (Frist: 24.01.2022). 
+Sie können Ihre Lösungen zu Aufgabe 2 & 3 als PDF in Moodle hochladen (Frist: 24.01.2022). 
 
 ```{r setup1, echo=FALSE, warning=FALSE, message=FALSE}
 r_on_server = FALSE
-if(r_on_server==T) basicpath = "/net/ifs2/san_projekte/projekte/genstat/"  else basicpath =  "C:/Users/janne/Documents/R/Test/Teaching_WS2122/"
+if(r_on_server==T) basicpath = "/net/ifs2/san_projekte/projekte/genstat/"  else basicpath =  "C:/Users/janne/Documents/R/myRepositories/Teaching_StatAspekte/"
 if(r_on_server==T) .libPaths("/net/ifs2/san_projekte/projekte/genstat/07_programme/rpackages/amanMRO/") 
 
 #.libPaths()
@@ -48,10 +48,17 @@ c) Warum adjustiert man bei GX-Analysen häufig auf Lymphozyten und Monozyten?
 d) Wie kann man bei GX-Analysen auf technische bzw. biologische Confounder adjustieren?
 e) Skizzieren Sie den Ablauf einer eQTL-Analyse!
 
+## Aufgabe 2: Pathway-Analysen
 
-## Aufgabe 2: Multiples Testen in GE-Analysen
+Die Wirkung eines Medikaments X auf die Genexpression soll untersucht werden. Dazu wird ein Genexpressionsarray mit 15397 Genen verwendet und die Expression mit bzw. ohne Medikament verglichen. Dabei wurden 1042 Gene detektiert, die unterschiedliche Expression aufweisen. Das Medikament soll den Lipidstoffwechsel beeinflussen. Aus einer Datenbank sind dazu 2793 Gene bekannt, von denen 2587 auf dem Array enthalten sind. 
 
-Bitte führen Sie eine hierarchische Korrektur mittels Bonferroni auf beiden Stufen durch!
+Wie viele signifikante Gene müssten im Lipidstoffwechsel liegen, um von einer signifikanten Anreicherung ausgehen zu können? Gehen Sie dazu von einer hypergeometrischen Verteilung aus. 
+
+\newpage
+
+## Aufgabe 3: Multiples Testen in GE-Analysen
+
+In Tabelle \ref{tab6_1} sind die Ergebnisse einer Assoziationsstudie von 3 Genen und 11 SNPs gegeben. Bitte führen Sie eine hierarchische Korrektur mittels Bonferroni auf beiden Stufen durch! Welche SNPs sind nach Korrektur noch signifikant assoziiert?
 
 Gen  | SNP    | p-Wert
 ---- | ------ | --------
@@ -69,12 +76,15 @@ Gen2 | rs2004 | 0.0001
 Gen2 | rs2005 | 0.004
 Gen2 | rs2006 | 0.02
 Gen2 | rs2007 | 0.00005
+---- | ------ | --------
+Gen3 | rs1004 | 0.0124
+Gen3 | rs1005 | 0.2
+Gen3 | rs1006 | 0.0025
+Gen3 | rs2001 | 0.5
+Gen3 | rs2002 | 0.00001
+Gen3 | rs2003 | 0.054
 
-## Aufgabe 3: Pathway-Analysen
-
-Die Wirkung eines Medikaments X auf die Genexpression soll untersucht werden. Dazu wird ein Genexpressionsarray mit 15397 Genen verwendet und die Expression mit bzw. ohne Medikament verglichen. Dabei wurden 1042 Gene detektiert, die unterschiedliche Expression aufweisen. Das Medikament soll den Lipidstoffwechsel beeinflussen. Aus einer Datenbank sind dazu 2793 Gene bekannt, von denen 2587 auf dem Array enthalten sind. 
-
-Wie viele signifikante Gene müssten im Lipidstoffwechsel liegen, um von einer signifikanten Anreicherung ausgehen zu können? Gehen Sie dazu von einer hypergeometrischen Verteilung aus. 
+Table: Ergebnisse einer Assoziationsstudie mit 3 Genen und 11 SNPs.  \label{tab6_1}
 
 
 ## Aufgabe 4: Interpretation von Plots
