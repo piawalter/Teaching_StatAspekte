@@ -1,6 +1,6 @@
 ---
 title: "Genetische Statistik"
-subtitle: "Präsenzübung 9: GX-Analysen"
+subtitle: "Präsenzübung 10: Genexpressionsanalysen (GE-Analysen)"
 author: Dr. Janne Pott (janne.pott@uni-leipzig.de)
 date: January 18, 2022
 output: 
@@ -50,8 +50,9 @@ e) Skizzieren Sie den Ablauf einer eQTL-Analyse!
 
 ## Aufgabe 1 - Lösung a) & b)
 
-* **eQTL**:= Expression Qantitative Trait Locus $\Rightarrow GX \sim G$
-* **TWAS**: Transkriptionsweite Assoziationsstudie $\Rightarrow Phänotyp \sim GX$
+* **GE**: Genexpression, mRNA Levels 
+* **eQTL**: Expression Quantitative Trait Locus $\Rightarrow GE \sim G$
+* **TWAS**: Transkriptionsweite Assoziationsstudie $\Rightarrow Phänotyp \sim GE$
 * Ziel eQTL: 
     * Funktionelle Relevanz, Validierung
     * Identifizierung neuer genetischer Risikofaktoren
@@ -64,7 +65,7 @@ e) Skizzieren Sie den Ablauf einer eQTL-Analyse!
 
 ## Aufgabe 1 - Lösung c) & d)
 
-* **Technische Confounder**: z.B. Batcheffekte, Hintergrundrauschen, sollte in der Präprozessierung der GX-Arrays bereits korrigiert werden. 
+* **Technische Confounder**: z.B. Batcheffekte, Hintergrundrauschen, sollte in der Präprozessierung der GE-Arrays bereits korrigiert werden. 
 * **Biologische Confounder**: können meist als Modellparameter berücksichtigt werden: 
     + **Blutwerte**: nötig bei Blutgewebe da verschiedene Blutkörperfraktionen mit unterschiedliche GE 
     + Alter, Geschlecht, Medikamente: bekannter Einfluss (bsp. Sexualhormone sind Transkriptionsfaktoren)
@@ -82,7 +83,7 @@ e) Skizzieren Sie den Ablauf einer eQTL-Analyse!
 
 ## Aufgabe 2
 
-Frage: $GX \sim Medikament$?, $N=15,397$ GEs ($k=1,042$ sig. assoziiert, $m=2,587$ im Lipidpathway)
+Frage: $GE \sim Medikament$?, $N=15,397$ GEs ($k=1,042$ sig. assoziiert, $m=2,587$ im Lipidpathway)
 
 Wie viele signifikante Gene müssten im Lipidstoffwechsel liegen, um von einer signifikanten Anreicherung ausgehen zu können? Gehen Sie dazu von einer hypergeometrischen Verteilung aus. 
 
@@ -223,8 +224,6 @@ c) Wie ist dieser Plot zu interpretieren?
 
 ## Plot 1: Genetik-Umwelt-Interaktionsplot
 
-![](../Exercises_classic/figures/Blatt6_1_GxE.jpg){width=50%}
-
 * Darstellung des Haupt- bzw. Interaktionseffekts der Genetik und Umwelt auf das Risiko einer Erkrankung. Durchgezogenen Linie: Allel A; gestrichelte Linie: Allel B
 * Panel a: Haupteffekt durch die Genetik, Allel B erhöht das Risiko, kein Umwelteinfluss
 * Panel b: Haupteffekt durch die Umwelt, Genetik spielt keine Rolle
@@ -233,11 +232,9 @@ c) Wie ist dieser Plot zu interpretieren?
 
 ## Plot 2
 
-![](../Exercises_classic/figures/Blatt6_2_SNPClusterplot.jpg)
+![](../Exercises_classic/figures/Blatt6_2_SNPClusterplot.jpg){width=80%}
 
 ## Plot 2: SNP-Clusterplot
-
-![](../Exercises_classic/figures/Blatt6_2_SNPClusterplot.jpg){width=40%}
 
 * Clusterplot eines SNPs, Aufgetragen sind die transformierten Intensitäten der zwei Allele. Grün: Cluster von Genotyp BB; Gelb: Cluster AB; Blau: Cluster AA; rot: Mittelpunkte der Cluster
 * keine / kaum graue Punkte zu sehen $\rightarrow$ wenige Missings, gute Callrate
@@ -250,8 +247,6 @@ c) Wie ist dieser Plot zu interpretieren?
 ![](../Exercises_classic/figures/Blatt6_3_XYIntensity.jpg)
 
 ## Plot 3: X-Y-Intensity Plot
-
-![](../Exercises_classic/figures/Blatt6_3_XYIntensity.jpg){width=25%}
 
 * Intensitätsplot aller gonosomalen SNPs (Mittelwert pro X bzw. Y pro Sample). Farbcodierung vergleicht Geschlecht aus der Datenbank mit dem in dem Calling berechneten Geschlecht.
 * Zwei Mismatches (cyan und rot): hier stimmt das Datenbankgeschlecht nicht zu dem Berechneten $\rightarrow$ beide für alle Analysen filtern.
@@ -266,8 +261,6 @@ c) Wie ist dieser Plot zu interpretieren?
 
 ## Plot 4: PC-Plot
 
-![](../Exercises_classic/figures/Blatt6_4_PCA.jpg){width=40%}
-
 * Hauptkomponentenanalyse der Genetikdaten, aufgetragen sind die ersten zwei Eigenvektoren. Diese trennen die ethnische Herkunft der Samples auf. Schwarz: afrikanisches Cluster; rot: asiatisches Cluster; blau: euopäisches Cluster; grün: unbekannte Ethnie (vermutlich Europäer); lila: unbekannte Ethnie entlang des Dreiecks
 * Hauptkomponenten werden verwendet um auf Stratifikationsbias in genomweiten Studien zu adjustieren. Stratifikationsbias: falsche Schätzer genetischer Effekte aufgrund einer gemeinsamen Analyse von Personen unterschiedlicher genetischer Herkunft bei gleichzeitigem Vorliegen nichtgenetisch bedingter Unterschiede zwischen den Personengruppen. 
 
@@ -277,8 +270,6 @@ c) Wie ist dieser Plot zu interpretieren?
 ![](../Exercises_classic/figures/Blatt6_5_QQMan.jpg)
 
 ## Plot 5: QQ- und Manhattan-Plot
-
-![](../Exercises_classic/figures/Blatt6_5_QQMan.jpg){width=50%}
 
 * QQ-Plot: Vergleich der erwarteten Verteilung der Teststatistiken mit der Beobachteten.
 * Keine Inflation der Teststatistiken zu sehen (d.h. Beobachtungen liegen auf der Ursprungsgeraden für nicht signifikante Beobachtungen)
@@ -291,11 +282,9 @@ c) Wie ist dieser Plot zu interpretieren?
 
 ## Plot 6: Regional-Association-Plot
 
-![](../Exercises_classic/figures/Blatt6_6_RAPlot.jpg){width=20%}
-
 * Entspricht einem Zoom in einen Manhattanplot
 * Zusätzliche Informationen: Rekombinationsrate (hellblaue Peaks entsprechen Rekombinationshotspots); Gene (inkl. Ableserichtung); LD bezüglich des Top-Hits (Färbung der Punkte)
-* Es fehlt eine LD-Legende! Vermutlich rot: hohes LD ($r^2>0.8$), orange: mittleres LD ($0.5<r^2<0.8), gelb: niedriges LD ($0.2<r^2<0.5), grau: kein LD ($r^2<0.2). 
+* Es fehlt eine LD-Legende! Vermutlich rot: hohes LD ($r^2>0.8$), orange: mittleres LD ($0.5<r^2<0.8$), gelb: niedriges LD ($0.2<r^2<0.5$), grau: kein LD ($r^2<0.2$). 
 * Vermutlich nur ein genomweit signifikantes Signal, die anderen stark assoziierten Varianten sind über LD gekoppelt (nicht unabhängig).
 * Man kann nicht das kausale Gen ablesen, da man nicht weiß, ob es sich um eine Missense-Mutation in einem Gen oder Mutation im Enhancer Bereich vor einem Gen handelt. 
 
@@ -304,8 +293,6 @@ c) Wie ist dieser Plot zu interpretieren?
 ![](../Exercises_classic/figures/Blatt6_7_LDHeatmap.jpg){width=65%}
 
 ## Plot 7: LD-Heatmap
-
-![](../Exercises_classic/figures/Blatt6_7_LDHeatmap.jpg){width=25%}
 
 * Alle paarweisen LD $r^2$ einer Region sind im Dreieck aufgetragen. Die Striche zeigen die Position in einem Gen an (dunkle Kästen: Exons), darüber ist ein Manhattanplot aufgetragen. 
 * Man erkennt drei Haploblöcke. Im ersten sind drei signifikante SNPs (blau, grün, magenta), die die restlichen SNPs im Block taggen. Im zweiten Block gibt es nur einen signifikanten Hit (cyan), im letzten Block keinen. 
@@ -316,8 +303,6 @@ c) Wie ist dieser Plot zu interpretieren?
 ![](../Exercises_classic/figures/Blatt6_8_ForestPlot.jpg)
 
 ## Plot 8: Forest-Plot
-
-![](../Exercises_classic/figures/Blatt6_8_ForestPlot.jpg){width=40%}
 
 * Meta-Analyse eines SNPs in 5 Studien. 
 * Größe der Schätz-Quadrate spiegelt Fallzahl der Studien wider, Fehlerbalken das 95%-Konfidenzinterval. 
@@ -330,8 +315,6 @@ c) Wie ist dieser Plot zu interpretieren?
 
 ## Plot 9: eQTL-Plot
 
-![](../Exercises_classic/figures/Blatt6_9_eQTLPlot.jpg){width=50%}
-
 * Position der SNPs gegen die Position der Sonden aufgetragen, wobei nur signifikante eQTLs mit einem Kreuz gekennzeichnet wurden (Farbe alternierend bzgl. SNP Position, graue Streifen bzgl. Sonden Position). Je größer das Kreuz, desto stärker die Assoziation.  
 * Entlang der Ursprungsgeraden liegen cis-eQTLs. 
 * Auf Chromosom 1, 6, 12, und 16 gibt es trans-eQTLs, die mit Sonden auf Chr. 11, 19, 8 und 18, und 1, 4, 11, und X assoziieren. 
@@ -342,11 +325,15 @@ c) Wie ist dieser Plot zu interpretieren?
 
 ## Plot 10: MR-DAGs
 
-![](../Exercises_classic/figures/Blatt6_10_MRDAG.jpg){width=50%}
-
 * Gerichtete Azyklische Graphen für eine Mendelische Randomisierung. 
 * Panel a: $G_1$ ist ein valides Instrument, da es keinen anderen Weg zu Y gibt als über X. 
 * Panel b: $G_1$ ist ein invalides Instrument, da es in hohen LD zu $G_2$ steht und $G_2$ direkt Y beeinflusst. 
 
 # Zusammenfassung
 
+## Zusammenfassung
+
+* **eQTLs**: Expression Quantitative Trait Locus $\Rightarrow GE_i \sim G_j$, für alle $i = 1, ... m$ Genexpressionssonden und alle $j = 1,  ... n$ SNPs
+* **TWAS**: Transkriptionsweite Assoziationsstudie $\Rightarrow Phänotyp \sim GE_i$, für alle $i = 1, ... m$ Genexpressionssonden
+* **Pathwayanalyse**: Sind mehr Gene eines Pathways mit einem Phänotypen assoziiert, als man zufällig erwarten würde?
+* **Hierarchische Korrektur** auf multiples Testen: Bsp. eQTL-Studie, alle SNPs mit allen GE-Sonden getesten, also sowohl multiple Test auf SNP als auch auf GE-Ebene. Daher korrigiert man hier in Stufen, erst innerhalb einer Sonde, anschließend über alle Sonden hinweg. 
