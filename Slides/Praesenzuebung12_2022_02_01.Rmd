@@ -1,0 +1,225 @@
+---
+title: "Genetische Statistik"
+subtitle: "Präsenzübung 12: Mendelische Randomosierung"
+author: Dr. Janne Pott (janne.pott@uni-leipzig.de)
+date: February 01, 2022
+output: 
+  beamer_presentation:
+    theme: "Madrid"
+    colortheme: "lily"
+    fonttheme: "structurebold"
+    slide_level: 2
+lang: de
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(data.table)
+setDTthreads(1)
+library(ggplot2)
+library(ivpack)
+library(MendelianRandomization)
+library(meta)
+
+pathToData = "../Exercises_R/data2/"
+```
+
+## Fragen
+
+Gibt es Fragen zu
+
+* Vorlesung?
+* Übung?
+* Seminar?
+
+## Plan heute
+
+Mendelische Randomisierung
+
+## Vergleich RCT vs MR
+
+![Vergleich RCT vs. MR. RCT: Wenn die beiden Arme balanciert waren bezüglich aller relevanten Confounder *U* ist jede Änderung in *Y* verursacht durch die Änderung in *X*. MR: Erzeuge Placebo-Gruppe mit Patienten mit dem Risikoallele. \label{fig6_1}](../Exercises_R/figures/Blatt6_MR1.jpg){width=50%}
+
+## Gerichteter azyklischer Graph (DAG)
+
+![Gerichteter azyklischer Graph der Mendelschen Randomisierung. Es gibt drei Bedingungen bei einer MR.  \label{fig6_2}](../Exercises_R/figures/Blatt6_MR.jpg)
+
+## Ausgangslage
+
+Genomweit signifikante SNPs $G$ zu einem Risikofaktor $X$
+
+Frage: gibt es einen kausalen Effekt von $X$ auf eine Krankheit $Y$?
+
+* Methode 1: Ratio-Methode (vgl Vorlesung)
+* Methode 2: 2-Stage-Least-Square-Methode (2SLS)
+* Methode 3: Inverse-Variance-Weighted-Methode (IVW)
+
+```{r B6A1-L1, eval=T, echo=F}
+load(paste0(pathToData,"MR.RData"))
+attach(myDat)
+
+ratio_estimate <- function(g,x,y){
+  mody<-lm(y ~ g)
+  modx<-lm(x ~ g)
+  by<-summary(mody)$coef[2,1]
+  byse<-summary(mody)$coef[2,2]
+  bx<-summary(modx)$coef[2,1]
+  bxse<-summary(modx)$coef[2,2]
+  beta.ratio<-by/bx
+  beta.ratio
+  se.ratio.st<- byse/sqrt(bx^2)
+  se.ratio.nd<- sqrt(byse^2/bx^2 + by^2*bxse^2/bx^4)
+  p1<-2*pnorm(-abs(beta.ratio/se.ratio.st))
+  p2<-2*pnorm(-abs(beta.ratio/se.ratio.nd))
+  fstat<- summary(modx)$f[1]
+  maf<- (sum(g==1) + 2*sum(g==2))/(2*length(g))   
+  return(c(by,byse,bx,bxse, beta.ratio,se.ratio.st,se.ratio.nd,p1,p2,fstat,maf))
+}
+
+g_mat<-cbind(g1,g2,g3,g4)
+ratio.all<-round(apply(g_mat,2,ratio_estimate,x=x,y=y),4)
+row.names(ratio.all)<-c("by","byse","bx","bxse",
+                        "beta.ratio","se.ratio.st","se.ratio.nd",
+                        "pval.st","pval.nd","fstat","maf")
+```
+
+## Ergebnis Ratio-Methode
+
+```{r B6A1-L2, eval=T, echo=F}
+knitr::kable(ratio.all)
+```
+
+## Ergebnis Ratio-Methode Zusammenfassung
+
+* $g_2$ hat höchste Präzision (kleinster Standardfehler), bedingt durch starke Assoziation mit $X$
+* $g_3$ liefert einen signifikanten kausalen Schätzer (unter Verwendung von $SE_1$)
+* positiver kausaler Effekt, obwohl die Korrelation negativ war; möglich durch starken Confounder-Einfluss
+
+## Ergebnis 2SLS-Methode
+
+```{r B6A1-L3, eval=T, echo=F}
+# per Hand
+TSLS_func<-function(snp,risk,out,name){
+  #snp=myDat[,2:5]; risk=myDat[,6]; out=myDat[,7]; name="all"
+  snp2<-as.matrix(snp)
+  stage1<-lm(risk~snp2)
+  fit<-stage1$fitted.values
+  stage2<-lm(out~fit)
+  res<-data.table(beta_tsls=summary(stage2)$coef[2,1],
+                  se_tsls=summary(stage2)$coef[2,2],
+                  p_tsls=summary(stage2)$coef[2,4],
+                  SNP=name)
+  return(res)
+}
+dummy1<-TSLS_func(snp=myDat[,2], risk=myDat[,6], out=myDat[,7], name="g1")
+dummy2<-TSLS_func(snp=myDat[,3], risk=myDat[,6], out=myDat[,7], name="g2")
+dummy3<-TSLS_func(snp=myDat[,4], risk=myDat[,6], out=myDat[,7], name="g3")
+dummy4<-TSLS_func(snp=myDat[,5], risk=myDat[,6], out=myDat[,7], name="g4")
+dummy5<-TSLS_func(snp=myDat[,2:5], risk=myDat[,6], out=myDat[,7], name="all")
+TSLS.all<-rbind(dummy1,dummy2,dummy3,dummy4,dummy5)
+TSLS.all[,method:= "haendisch"]
+
+TSLS.all = data.table(g1 = as.numeric(dummy1[,1:3]),
+                      g2 = as.numeric(dummy2[,1:3]),
+                      g3 = as.numeric(dummy3[,1:3]),
+                      g4 = as.numeric(dummy4[,1:3]),
+                      all = as.numeric(dummy5[,1:3]))
+
+# per ivpack
+ivmod1<-ivreg(y~x|g1,x=T)
+ivmod2<-ivreg(y~x|g2,x=T)
+ivmod3<-ivreg(y~x|g3,x=T)
+ivmod4<-ivreg(y~x|g4,x=T)
+ivmod5<-ivreg(y~x|g1+g2+g3+g4,x=T)
+dummy6<-data.table(g1=summary(ivmod1)$coef[2,c(1,2,4)],
+                   g2=summary(ivmod2)$coef[2,c(1,2,4)],
+                   g3=summary(ivmod3)$coef[2,c(1,2,4)],
+                   g4=summary(ivmod4)$coef[2,c(1,2,4)],
+                   all=summary(ivmod5)$coef[2,c(1,2,4)])
+
+TSLS.all<-rbind(TSLS.all,dummy6)
+TSLS.all = as.matrix(TSLS.all)
+row.names(TSLS.all)<-c("beta.2SLS","se.2SLS","pval.2SLS",
+                       "beta.IVreg","se.IVreg","pval.IVreg")
+
+# Vergleich der kausalen Schaetzer
+knitr::kable(TSLS.all,digits = 4)
+knitr::kable(ratio.all[c(5:9),],digits = 4)
+```
+
+## Ergebnis 2SLS-Methode Zusammenfassung
+
+* Zwei Stufen einzeln (**2SLS**) vs zusammen (**ivreg**): 
+    + gleiche kausale Schätzer
+    + unterschiedliche $SEs$ 
+    + Grund: *ivreg* berücksichtigt die Unsicherheit der ersten Stufe
+* Vergleich Ratio - 2SLS:
+    + gleiche kausale Schätzer
+    + $SE.st$ identisch zu **2SLS** 
+    + $SE.nd$ ähnlich zu **ivreg**
+    + Grund: Delta-Methode, 2. Term beinhaltet auch den $SE$ von der ersten Stufe ($X \sim G$)
+
+## Ergebnis IVW-Methode
+
+```{r B6A1-L4, eval=T, echo=F}
+ratio.all2<-as.data.frame(t(ratio.all))
+attach(ratio.all2)
+beta.ivw<-sum(bx*by*byse^-2)/sum(bx^2*byse^-2)
+se.ivw<-1/sqrt(sum(bx^2*byse^-2))
+p.ivw = 2*pnorm(-abs(beta.ivw/se.ivw))
+
+# mit meta 
+myBetas<-ratio.all2$beta.ratio
+mySEs1<-ratio.all2$se.ratio.st
+mySEs2<-ratio.all2$se.ratio.nd
+mod1<-metagen(myBetas,mySEs1,studlab = c("SNP 1","SNP 2","SNP 3","SNP 4"))
+mod2<-metagen(myBetas,mySEs2,studlab = c("SNP 1","SNP 2","SNP 3","SNP 4"))
+
+IVW.all = data.table(all.func = c(beta.ivw,se.ivw,p.ivw),
+                     all.meta1 = c(mod1$TE.fixed,
+                                            mod1$seTE.fixed,
+                                            mod1$pval.fixed),
+                     all.meta2 = c(mod2$TE.fixed,
+                                            mod2$seTE.fixed,
+                                            mod2$pval.fixed))
+
+IVW.all = as.matrix(IVW.all)
+row.names(IVW.all)<-c("beta.IVW","se.IVW","pval.IVW")
+knitr::kable(IVW.all,digits = 4)
+
+# mit MendelianRandomization 
+MRObject<- mr_input(bx=ratio.all2$bx,bxse=ratio.all2$bxse, 
+                    by=ratio.all2$by,byse = ratio.all2$byse)
+tab1<-mr_allmethods(MRObject,method = "main")
+knitr::kable(tab1@Values[,c(1,2,3,6)],digits = 4,
+             caption = "Main methods implemented in MendelianRandomization package",
+             col.names = c("Method","Estimate","Std Error","P-value"))
+```
+
+## Ergebnis IVW-Methode - Plot 
+
+```{r B6A1-L5, eval=T, echo=F}
+mr_plot(MRObject,interactive = F,labels = T)
+```
+
+## Ergebnis IVW-Methode - Plot (mehrere Methoden)
+
+```{r B6A1-L6, eval=T, echo=F}
+mr_plot(mr_allmethods(MRObject,method = "main"))
+```
+
+## Ergebnis IVW-Methode Zusammenfassung
+
+* IVW == FEM der Ratio-Methode mit $SE.st$
+* Vorteil *meta*: man kann die Heterogenität beurteilen (Cochrans Q)
+* Es gibt viele Methoden, mehrere Varianten zu kombinieren. 
+* Pflicht: Beurteilung des Scatterplots (falls kein Q vorhanden)
+* Empfehlung 1: teste alle Hauptmethoden, um ein Gefühl für die Pleitropie & Heterogenität zu bekommen. 
+* Empfehlung 2: Sensitivitätsanalysen durchführen (einschränken auf biologisch sinnvolle Varianten; stärkste Outlier weglassen; o.ä.)
+
+## Zusammenfassung
+
+* MR einfach nutzbar mit Genotypdaten  oder Summary Statistics 
+* Bedingung 1 muss gezeigt werden, Bedingung 2 & 3 sollte man plausibilisieren können
+* Bei mehreren Instrumenten: LD check (paarweise $r^2<0.1$, notfalls Korrektur mittels LD-Matrix)
+* Funktioniert auch bei binären $Y$ ($X \sim G$ nur in Kontrollen bzgl. $Y$ bestimmen)
