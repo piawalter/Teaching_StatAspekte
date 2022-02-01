@@ -115,11 +115,6 @@ a) Bestimmen sie folgende Parameter für alle SNPs *g1* - *g4*:
 b) Bezogen auf den Standardfehler erster Ordnung, welche genetische Variante liefert das präziseste Ergebnis? Wodurch wird die Präzision beeinflusst? Wann und wo unterscheiden sich die Fehler erster und zweiter Ordnung am meisten?
   
 c) Unterscheidet sich der kausale Schätzer von der beobachteten Assoziation? Welche kausalen Schätzer sind signifikant?
-
-LÖSUNG:
-von Pia
-
-...
   
 \newpage 
 
